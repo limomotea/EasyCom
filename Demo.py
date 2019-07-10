@@ -4,7 +4,14 @@ from tkinter import ttk
 win = tk.Tk()
 win.title("Python GUI")  # 添加标题
 
-ttk.Label(win, text="Chooes a number").grid(column=1, row=0)  # 添加一个标签，并将其列设置为1，行设置为0
+def insert_point():  # 在鼠标焦点处插入输入内容
+    return
+
+# 第3步，设定窗口的大小(长 * 宽)
+win.geometry('500x300')  # 这里的乘是小x
+
+
+ttk.Label(win, text="Chooes a number hhhhhhhhhhhhhhhhh").grid(column=1, row=0)  # 添加一个标签，并将其列设置为1，行设置为0
 ttk.Label(win, text="Enter a name:").grid(column=0, row=0)  # 设置其在界面中出现的位置  column代表列   row 代表行
 
 
@@ -20,9 +27,12 @@ action.grid(column=2, row=1)  # 设置其在界面中出现的位置  column代�
 
 # 文本框
 name = tk.StringVar()  # StringVar是Tk库内部定义的字符串变量类型，在这里用于管理部件上面的字符；不过一般用在按钮button上。改变StringVar，按钮上的文字也随之改变。
-nameEntered = ttk.Entry(win, width=12, textvariable=name)  # 创建一个文本框，定义长度为12个字符长度，并且将文本框中的内容绑定到上一句定义的name变量上，方便clickMe调用
+nameEntered = ttk.Entry(win, width=50,textvariable=name)  # 创建一个文本框，定义长度为12个字符长度，并且将文本框中的内容绑定到上一句定义的name变量上，方便clickMe调用
+
 nameEntered.grid(column=0, row=1)  # 设置其在界面中出现的位置  column代表列   row 代表行
 nameEntered.focus()  # 当程序运行时,光标默认会出现在该文本框中
+
+
 
 # 创建一个下拉列表
 number = tk.StringVar()
