@@ -1,43 +1,34 @@
-import tkinter as tk  # 使用Tkinter前需要先导入
+import tkinter as tk
+from tkinter import ttk
 
-# 第1步，实例化object，建立窗口window
-window = tk.Tk()
+win = tk.Tk()
+win.title("Python GUI")  # 添加标题
 
-
-
-# 第2步，给窗口的可视化起名字
-window.title('My Window')
-
-# 第3步，设定窗口的大小(长 * 宽)
-window.geometry('500x300')  # 这里的乘是小x
-
-# 第4步，在图形界面上设定输入框控件entry框并放置
-e = tk.Entry(window, show=None)  # 显示成明文形式
-e.pack()
+ttk.Label(win, text="Chooes a number").grid(column=1, row=0)  # 添加一个标签，并将其列设置为1，行设置为0
+ttk.Label(win, text="Enter a name:").grid(column=0, row=0)  # 设置其在界面中出现的位置  column代表列   row 代表行
 
 
-# 第5步，定义两个触发事件时的函数insert_point和insert_end（注意：因为Python的执行顺序是从上往下，所以函数一定要放在按钮的上面）
-def insert_point():  # 在鼠标焦点处插入输入内容
-    var = e.get()
-    t.insert('insert', var)
+# button被点击之后会被执行
+def clickMe():  # 当acction被点击时,该函数则生效
+    action.configure(text='Hello ' + name.get())  # 设置button显示的内容
+    action.configure(state='disabled')  # 将按钮设置为灰色状态，不可使用状态
 
 
-def insert_end():  # 在文本框内容最后接着插入输入内容
-    var = e.get()
-    t.insert('end', var)
+# 按钮
+action = ttk.Button(win, text="Click Me!", command=clickMe)  # 创建一个按钮, text：显示按钮上面显示的文字, command：当这个按钮被点击之后会调用command函数
+action.grid(column=2, row=1)  # 设置其在界面中出现的位置  column代表列   row 代表行
 
+# 文本框
+name = tk.StringVar()  # StringVar是Tk库内部定义的字符串变量类型，在这里用于管理部件上面的字符；不过一般用在按钮button上。改变StringVar，按钮上的文字也随之改变。
+nameEntered = ttk.Entry(win, width=12, textvariable=name)  # 创建一个文本框，定义长度为12个字符长度，并且将文本框中的内容绑定到上一句定义的name变量上，方便clickMe调用
+nameEntered.grid(column=0, row=1)  # 设置其在界面中出现的位置  column代表列   row 代表行
+nameEntered.focus()  # 当程序运行时,光标默认会出现在该文本框中
 
-# 第6步，创建并放置两个按钮分别触发两种情况
-b1 = tk.Button(window, text='insert point', width=10,
-               height=2, command=insert_point)
-b1.pack()
-b2 = tk.Button(window, text='insert end', width=10,
-               height=2, command=insert_end)
-b2.pack()
+# 创建一个下拉列表
+number = tk.StringVar()
+numberChosen = ttk.Combobox(win, width=12, textvariable=number)
+numberChosen['values'] = (1, 2, 4, 42, 100)  # 设置下拉列表的值
+numberChosen.grid(column=1, row=1)  # 设置其在界面中出现的位置  column代表列   row 代表行
+numberChosen.current(0)  # 设置下拉列表默认显示的值，0为 numberChosen['values'] 的下标值
 
-# 第7步，创建并放置一个多行文本框text用以显示，指定height=3为文本框是三个字符高度
-t = tk.Text(window, height=3)
-t.pack()
-
-# 第8步，主窗口循环显示
-window.mainloop()
+win.mainloop()
