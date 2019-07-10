@@ -3,6 +3,8 @@ import tkinter as tk  # 使用Tkinter前需要先导入
 # 第1步，实例化object，建立窗口window
 window = tk.Tk()
 
+
+
 # 第2步，给窗口的可视化起名字
 window.title('My Window')
 
