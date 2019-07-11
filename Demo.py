@@ -5,7 +5,7 @@ win = tk.Tk()
 win.title("Python GUI")  # 添加标题
 
 def insert_point():  # 在鼠标焦点处插入输入内容
-    return
+    return ##
 
 # 第3步，设定窗口的大小(长 * 宽)
 win.geometry('500x300')  # 这里的乘是小x
