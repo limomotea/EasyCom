@@ -32,15 +32,13 @@ def insert_point():  # 在鼠标焦点处插入输入内容
         print('无可用串口')
     else: #
         t.delete(1.0,'end')
-        for i in range(0, len(port_list)):
-            print(port_list[i])
-            var = port_list[i]
-            t.insert('insert', var)
-            t.insert('insert', '\n')
         numberChosen.textvariable = len(port_list)
         list_portname = []
         for eachPort in port_list:
-            list_portname.append(eachPort.device)
+            serialName = eachPort.device
+            print(serialName)
+            t.insert('insert',serialName + '\n')
+            list_portname.append(serialName)
         numberChosen['values'] = list_portname  # 设置下拉列表的值
         numberChosen.current(0)  # 设置下拉列表默认显示的值，0为 numberChosen['values'] 的下标值
 
