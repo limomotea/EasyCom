@@ -15,7 +15,7 @@ tabControl.add(tab3, text='技术分析')
 tab4 = tk.Frame(tabControl,bg='blue')
 tabControl.add(tab4, text='编写代码')
 tab5 = tk.Frame(tabControl,bg='blue')
-tabControl.add(tab5, text='模拟回测')
+tabControl.add(tab5, text='模拟回测')#
 
 tab6 = ttk.Frame(tabControl)
 tabControl.add(tab6, text='双色球')

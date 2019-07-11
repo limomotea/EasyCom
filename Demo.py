@@ -21,7 +21,7 @@ def clickMe():  # 当acction被点击时,该函数则生效
     action.configure(state='disabled')  # 将按钮设置为灰色状态，不可使用状态
 
 
-# 按钮
+# 按钮#
 action = ttk.Button(win, text="Click Me!", command=clickMe)  # 创建一个按钮, text：显示按钮上面显示的文字, command：当这个按钮被点击之后会调用command函数
 action.grid(column=2, row=1)  # 设置其在界面中出现的位置  column代表列   row 代表行
 
