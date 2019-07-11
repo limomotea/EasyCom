@@ -8,7 +8,7 @@ root.geometry('400x300+200+200')
 tabControl = ttk.Notebook(root)  #创建Notebook
 tab1 = tk.Frame(tabControl,bg='blue')  #增加新选项卡
 tabControl.add(tab1, text='信息窗')  #把新选项卡增加到Notebook
-tab2 = tk.Frame(tabControl,bg='yellow')
+tab2 = tk.Frame(tabControl,bg='yellow') #
 tabControl.add(tab2, text='综合信息')
 tab3 = tk.Frame(tabControl,bg='green')
 tabControl.add(tab3, text='技术分析')

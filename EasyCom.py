@@ -5,7 +5,7 @@ import serial.tools.list_ports
 from tkinter import ttk
 
 # 第1步，实例化object，建立窗口window
-window = tk.Tk()
+window = tk.Tk() ##
 
 
 
