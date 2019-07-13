@@ -1,28 +1,33 @@
-import tkinter as tk  #装载tkinter模块,用于Python3
-from tkinter import ttk  #装载tkinter.ttk模块,用于Python3
-
-root =tk.Tk()  # 创建窗口对象
-root.title(string = 'ttk.Notebook演示')  #设置窗口标题
-root.geometry('400x300+200+200')
-
-tabControl = ttk.Notebook(root)  #创建Notebook
-tab1 = tk.Frame(tabControl,bg='blue')  #增加新选项卡
-tabControl.add(tab1, text='信息窗')  #把新选项卡增加到Notebook
-tab2 = tk.Frame(tabControl,bg='yellow')
-tabControl.add(tab2, text='综合信息')
-tab3 = tk.Frame(tabControl,bg='green')
-tabControl.add(tab3, text='技术分析')
-tab4 = tk.Frame(tabControl,bg='blue')
-tabControl.add(tab4, text='编写代码')
-tab5 = tk.Frame(tabControl,bg='blue')
-tabControl.add(tab5, text='模拟回测')#
-
-tab6 = ttk.Frame(tabControl)
-tabControl.add(tab6, text='双色球')
-tab7 = ttk.Frame(tabControl)
-tabControl.add(tab7, text='大乐透')
-tabControl.pack(expand=1, fill="both")
-
-tabControl.select(tab1) #选择tab1
-
-root.mainloop()     # 进入消息循环
+# Python 2.x使用这行
+#from Tkinter import *
+# Python 3.x使用这行
+from tkinter import *
+import random
+class App:
+    def __init__(self, master):
+        self.master = master
+        self.initWidgets()
+    def initWidgets(self):
+        # 定义字符串元组
+        books = ('疯狂Python讲义', '疯狂Swift讲义', '疯狂Kotlin讲义',\
+            '疯狂Java讲义', '疯狂Ruby讲义')
+        for i in range(len(books)):
+            # 生成3个随机数
+            ct = [random.randrange(256) for x in range(3)]
+            grayness = int(round(0.299*ct[0] + 0.587*ct[1] + 0.114*ct[2]))
+            # 将元组中3个随机数格式化成16进制数,转成颜色格式
+            bg_color = "#%02x%02x%02x" % tuple(ct)
+            # 创建Label，设置背景色和前景色
+            lb = Label(root,
+                text=books[i],
+                fg = 'White' if grayness < 120 else 'Black',
+                bg = bg_color)
+            # 使用place()设置该Label的大小和位置
+            lb.place(x = 20, y = 36 + i*36, width=180, height=30)
+root = Tk()
+root.title("Place布局")
+# 设置窗口的大小和位置
+# width x height + x_offset + y_offset
+root.geometry("250x250+30+30")
+App(root)
+root.mainloop()
