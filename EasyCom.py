@@ -209,7 +209,6 @@ def nil1(self):
 
 
 
-
     text = ''
     text = 'resize w: {0} H: {1}'.format(w, h)
     print(text)
