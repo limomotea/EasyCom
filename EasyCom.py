@@ -4,6 +4,7 @@ import serial
 import serial.tools.list_ports
 from tkinter import *
 from tkinter import scrolledtext
+from tkinter import ttk
 global ser
 
 # 第1步，实例化object，建立窗口window
@@ -16,7 +17,7 @@ window.title('My Window')
 
 
 # 第3步，设定窗口的大小(长 * 宽)
-window.geometry('600x600')  # 这里的乘是小x
+window.geometry('500x520')  # 这里的乘是小x
 
 
 
@@ -128,14 +129,53 @@ l1.place(x=245, y=93)
 nameEntered = tk.Entry(Information, width=10)
 nameEntered.place(x=315, y=90)
 
-Information = tk.LabelFrame(window, text="端口管理", width = 490,padx=0, pady=0,height = 140)  # 创建子容器，水平，垂直方向上的边距均为10
+Information = tk.LabelFrame(window, text="端口管理", width = 490,padx=0, pady=0,height = 75)  # 创建子容器，水平，垂直方向上的边距均为10
 # Information.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
 Information.place(x=5, y=440)
-
 l1=tk.Label(Information, text='串口:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=5, y=0)
-nameEntered = tk.Entry(Information, width=10)
-nameEntered.place(x=315, y=90)
+numberChosen = ttk.Combobox(Information, width=12, textvariable=5)
+numberChosen['values'] = (1, 2, 4, 42, 100)  # 设置下拉列表的值
+numberChosen.place(x=40, y=0)
+
+l1=tk.Label(Information, text='波特率:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1.place(x=175,  y=0)
+numberChosen = ttk.Combobox(Information, width=4, textvariable=5)
+numberChosen['values'] = (1, 2, 4, 42, 115200)  # 设置下拉列表的值
+numberChosen.place(x=220, y=0)
+
+l1=tk.Label(Information, text='校验位:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1.place(x=280, y=0)
+numberChosen = ttk.Combobox(Information, width=2, textvariable=5)
+numberChosen['values'] = (1, 2, 4, 4, 5)  # 设置下拉列表的值
+numberChosen.place(x=330, y=0)
+
+l1=tk.Label(Information, text='停止位:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1.place(x=375, y=0)
+numberChosen = ttk.Combobox(Information, width=2, textvariable=5)
+numberChosen['values'] = (1, 2, 4, 42, 1)  # 设置下拉列表的值
+numberChosen.place(x=420, y=0)
+
+b2 = tk.Button(Information, text='打开串口', width=5, height=1, command=nil)
+b2.place(x=5, y=25)
+l1 = tk.Label(Information, text='信息:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1.place(x=90, y=30)
+l1 = tk.Label(Information, text='打开串口成功')  # 创建子容器，水平，垂直方向上的边距均为10
+l1.place(x=130, y=30)
+b2 = tk.Button(Information, text='清零', width=3, height=1, command=nil)
+b2.place(x=410, y=25)
+
+# l1 = tk.Label(Information, text='接收:')  # 创建子容器，水平，垂直方向上的边距均为10
+# nameEntered = tk.Entry(Information, width=10)
+# nameEntered.place(x=315, y=90)
+# l1 = tk.Label(Information, text='字节')  # 创建子容器，水平，垂直方向上的边距均为10
+# nameEntered = tk.Entry(Information, width=10)
+# nameEntered.place(x=315, y=90)
+# l1 = tk.Label(Information, text='行')  # 创建子容器，水平，垂直方向上的边距均为10
+#
+#
+# nameEntered = tk.Entry(Information, width=10)
+# nameEntered.place(x=315, y=90)
 
 
 
