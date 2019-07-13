@@ -128,6 +128,15 @@ l1.place(x=245, y=93)
 nameEntered = tk.Entry(Information, width=10)
 nameEntered.place(x=315, y=90)
 
+Information = tk.LabelFrame(window, text="端口管理", width = 490,padx=0, pady=0,height = 140)  # 创建子容器，水平，垂直方向上的边距均为10
+# Information.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
+Information.place(x=5, y=440)
+
+l1=tk.Label(Information, text='串口:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1.place(x=5, y=0)
+nameEntered = tk.Entry(Information, width=10)
+nameEntered.place(x=315, y=90)
+
 
 
 # 第8步，主窗口循环显示
