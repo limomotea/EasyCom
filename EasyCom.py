@@ -6,6 +6,8 @@ from tkinter import *
 from tkinter import scrolledtext
 from tkinter import ttk
 global ser
+global debug, windowFormWidth, windowFormHeight, fw, fh
+
 
 # 第1步，实例化object，建立窗口window
 window = tk.Tk() ##
@@ -89,22 +91,22 @@ def nil():
     return()
 
 var = 1
-Information = tk.LabelFrame(window, text="接收缓冲区", width = 490,padx=0, pady=0,height = 290)  # 创建子容器，水平，垂直方向上的边距均为10
+Information1 = tk.LabelFrame(window, text="接收缓冲区", width = 490,padx=0, pady=0,height = 290)  # 创建子容器，水平，垂直方向上的边距均为10
 # Information.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
-Information.place(x=5, y=0)
-Information_Window = scrolledtext.ScrolledText(Information, width=50, height=17, padx=0, wrap=tk.WORD)
-Information_Window.place(x=110, y=0)
-Information_Window.config(highlightbackground = 'gray')
-r1 = tk.Radiobutton(Information, text='文本模式',  variable=var, value='A', command=nil)
+Information1.place(x=5, y=0)
+Information1_Window = scrolledtext.ScrolledText(Information1, width=50, height=17, padx=0, wrap=tk.WORD)
+Information1_Window.place(x=110, y=0)
+Information1_Window.config(highlightbackground = 'gray')
+r1 = tk.Radiobutton(Information1, text='文本模式',  variable=var, value='A', command=nil)
 r1.place(x=5, y=0)
-r2 = tk.Radiobutton(Information, text='HEX模式', variable=var, value='B', command=nil )
+r2 = tk.Radiobutton(Information1, text='HEX模式', variable=var, value='B', command=nil )
 r2.place(x=5, y=20)
-b1 = tk.Button(Information, text='清空接收区', width=8, height=1, command=nil)
+b1 = tk.Button(Information1, text='清空接收区', width=8, height=1, command=nil)
 b1.place(x=5, y=40)
-b2 = tk.Button(Information, text='保存接收数据', width=8, height=1, command=nil)
+b2 = tk.Button(Information1, text='保存接收数据', width=8, height=1, command=nil)
 b2.place(x=5, y=65)
 
-Information = tk.LabelFrame(window, text="接收缓冲区", width = 490,padx=0, pady=0,height = 140)  # 创建子容器，水平，垂直方向上的边距均为10
+Information = tk.LabelFrame(window, text="发送缓冲区", width = 490,padx=0, pady=0,height = 140)  # 创建子容器，水平，垂直方向上的边距均为10
 # Information.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
 Information.place(x=5, y=295)
 Information_Window = scrolledtext.ScrolledText(Information, width=50, height=5, padx=0, wrap=tk.WORD)
@@ -165,18 +167,40 @@ l1.place(x=130, y=30)
 b2 = tk.Button(Information, text='清零', width=3, height=1, command=nil)
 b2.place(x=410, y=25)
 
-# l1 = tk.Label(Information, text='接收:')  # 创建子容器，水平，垂直方向上的边距均为10
-# nameEntered = tk.Entry(Information, width=10)
-# nameEntered.place(x=315, y=90)
-# l1 = tk.Label(Information, text='字节')  # 创建子容器，水平，垂直方向上的边距均为10
-# nameEntered = tk.Entry(Information, width=10)
-# nameEntered.place(x=315, y=90)
-# l1 = tk.Label(Information, text='行')  # 创建子容器，水平，垂直方向上的边距均为10
-#
-#
-# nameEntered = tk.Entry(Information, width=10)
-# nameEntered.place(x=315, y=90)
+debug = 0
+windowFormWidth = 500
+windowFormHeight = 520
+fw = 490
+fh = 290
 
+def nil1(self):
+    global debug, windowFormHeight, windowFormWidth,fw,fh
+    w = window.winfo_width()
+    h = window.winfo_height()
+    rw = w - windowFormWidth
+    rh = h - windowFormHeight
+    windowFormWidth = w
+    windowFormHeight = h
+    fw = fw + rw
+    fh = fh + rh
+
+
+
+
+    text = ''
+    text = 'resize w: {0} H: {1}'.format(w, h)
+    print(text)
+
+
+
+    return
+
+
+window.bind("<Configure>", nil1)
+
+
+def resize(w, h, w_box, h_box, pil_image):
+    print('window resize')
 
 
 # 第8步，主窗口循环显示
