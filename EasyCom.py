@@ -16,7 +16,7 @@ window.title('My Window')
 
 
 # 第3步，设定窗口的大小(长 * 宽)
-window.geometry('500x500')  # 这里的乘是小x
+window.geometry('600x600')  # 这里的乘是小x
 
 
 
@@ -86,12 +86,11 @@ def insert_end():  # 在文本框内容最后接着插入输入内容
 def nil():
     return
 
-Information = tk.LabelFrame(window, text="操作信息", width = 400,padx=5, pady=5)  # 创建子容器，水平，垂直方向上的边距均为10
-Information.pack(expand=YES, fill='x')
-Information_Window = scrolledtext.ScrolledText(Information, width=40, height=10, padx=10, pady=10,wrap=tk.WORD)
-Information_Window.grid(column=2, row=0,sticky='w')
-r1 = tk.Label(Information, text='                        ', )
-r1.grid(column=0, row=0,sticky='nw')
+Information = tk.LabelFrame(window, text="操作信息", width = 500,padx=5, pady=5,height = 300)  # 创建子容器，水平，垂直方向上的边距均为10
+Information.pack(expand=NO,side='left',anchor = 'n',padx=5,pady=5,ipadx=5,ipady=5)
+Information_Window = scrolledtext.ScrolledText(Information, width=50, height=18, padx=10,wrap=tk.WORD)
+Information_Window.place(x=100,y=0)
+
 var=1
 r1 = tk.Radiobutton(Information, text='文本模式',  variable=var ,value='A', command=nil)
 r1.place(x=0,y=0)
