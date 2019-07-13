@@ -6,7 +6,7 @@ from tkinter import *
 from tkinter import scrolledtext
 from tkinter import ttk
 global ser
-global debug, windowFormWidth, windowFormHeight, fw, fh
+global debug, windowFormWidth, windowFormHeight
 
 
 # 第1步，实例化object，建立窗口window
@@ -94,9 +94,9 @@ var = 1
 Information1 = tk.LabelFrame(window, text="接收缓冲区", width = 490,padx=0, pady=0,height = 290)  # 创建子容器，水平，垂直方向上的边距均为10
 # Information.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
 Information1.place(x=5, y=0)
-Information1_Window = scrolledtext.ScrolledText(Information1, width=50, height=17, padx=0, wrap=tk.WORD)
-Information1_Window.place(x=110, y=0)
-Information1_Window.config(highlightbackground = 'gray')
+Information1_text = scrolledtext.ScrolledText(Information1, width=50, height=17, padx=0, wrap=tk.WORD)
+Information1_text.place(x=110, y=0)
+Information1_text.config(highlightbackground = 'gray')
 r1 = tk.Radiobutton(Information1, text='文本模式',  variable=var, value='A', command=nil)
 r1.place(x=5, y=0)
 r2 = tk.Radiobutton(Information1, text='HEX模式', variable=var, value='B', command=nil )
@@ -109,9 +109,10 @@ b2.place(x=5, y=65)
 Information2 = tk.LabelFrame(window, text="发送缓冲区", width = 490,padx=0, pady=0,height = 140)  # 创建子容器，水平，垂直方向上的边距均为10
 # Information2.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
 Information2.place(x=5, y=295)
-Information2_Window = scrolledtext.ScrolledText(Information2, width=50, height=5, padx=0, wrap=tk.WORD)
-Information2_Window.place(x=110, y=0)
-Information2_Window.config(highlightbackground = 'gray')
+Information2_text = scrolledtext.ScrolledText(Information2, width=50, height=5, padx=0, wrap=tk.WORD)
+Information2_text.place(x=110, y=0)
+
+Information2_text.config(highlightbackground = 'gray')
 r1 = tk.Radiobutton(Information2, text='文本模式',  variable=var, value='A', command=nil)
 r1.place(x=5, y=0)
 r2 = tk.Radiobutton(Information2, text='HEX模式', variable=var, value='B', command=nil )
@@ -177,13 +178,34 @@ def nil1(self):
     global debug, windowFormHeight, windowFormWidth,fw,fh
     w = window.winfo_width()
     h = window.winfo_height()
+    getdata = Information1.config()
     rw = w - windowFormWidth
     rh = h - windowFormHeight
     windowFormWidth = w
     windowFormHeight = h
-    fw = fw + rw
-    fh = fh + rh
+    fw = getdata['width'][-1] + rw
+    fh = getdata['height'][-1] + rh
     Information1.config(width = fw,height = fh)
+
+    fw = getdata['width'][-1] + rw
+    Information2.config(width = fw)
+    getdata = Information2.place_info()
+    newy = int(getdata['y']) + rh
+    Information2.place(y = newy)
+
+    Information3.config(width = fw)
+    getdata = Information3.place_info()
+    newy = int(getdata['y']) + rh
+    Information3.place(y = newy)
+
+    # getdata = Information2_text.config()
+    newwidth = int((w-120) / 7.3)
+    newheight = int((fh-10) / 15.8)
+
+    Information1_text.config(width = newwidth,height = newheight)
+    Information2_text.config(width = newwidth)
+
+
 
 
 
