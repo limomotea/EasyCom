@@ -48,23 +48,31 @@ def insert_point():  # 在鼠标焦点处插入输入内容
 def insert_end():  # 在文本框内容最后接着插入输入内容
     try:
         port_list = list(serial.tools.list_ports.comports())
-        portx = port_list[0].device
+        portx = port_list[1].device
+        print(portx)
         bps = 115200
         # 超时设置,None：永远等待操作，0为立即返回请求结果，其他值为等待超时时间(单位为秒）
-        timex = None
-        ser = serial.Serial(portx, bps, timeout=timex)
+        timex = 1
+        ser = serial.Serial(portx, bps, timeout=timex,write_timeout=timex)
         print("串口详情参数：", ser)
 
         # 十六进制的发送
-        result = ser.write(chr(0x06).encode("utf-8"))  # 写数据
-        print("Test", result)
-
+        for i in range(10000):
+            if ser.isOpen():
+                # print('ser is open',i)
+                try:
+                      result = ser.write("I am LGS.test long string\n".encode('utf-8'))
+                except:
+                    print("---异常---write：")
+        # print("Test", result)
+        result = 1
+        print("写总字节数:", result)
         # 十六进制的读取
-        print(ser.read().hex())  # 读一个字节
-
-        print("---------------")
+        # print(ser.read().hex())  # 读一个字节
+        print('ser write ok')
+        # print("---------------")
         ser.close()  # 关闭串口
-
+        print('ser colsed')
     except Exception as e:
         print("---异常---：", e)
 
