@@ -83,66 +83,50 @@ def insert_end():  # 在文本框内容最后接着插入输入内容
     print('ser write ok')
     # print("---------------")
 
+
 def nil():
-    return
+    return()
 
-Information = tk.LabelFrame(window, text="操作信息", width = 500,padx=5, pady=5,height = 300)  # 创建子容器，水平，垂直方向上的边距均为10
-Information.pack(expand=NO,side='left',anchor = 'n',padx=5,pady=5,ipadx=5,ipady=5)
-Information_Window = scrolledtext.ScrolledText(Information, width=50, height=18, padx=10,wrap=tk.WORD)
-Information_Window.place(x=100,y=0)
+var = 1
+Information = tk.LabelFrame(window, text="接收缓冲区", width = 490,padx=0, pady=0,height = 290)  # 创建子容器，水平，垂直方向上的边距均为10
+# Information.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
+Information.place(x=5, y=0)
+Information_Window = scrolledtext.ScrolledText(Information, width=50, height=17, padx=0, wrap=tk.WORD)
+Information_Window.place(x=110, y=0)
+Information_Window.config(highlightbackground = 'gray')
+r1 = tk.Radiobutton(Information, text='文本模式',  variable=var, value='A', command=nil)
+r1.place(x=5, y=0)
+r2 = tk.Radiobutton(Information, text='HEX模式', variable=var, value='B', command=nil )
+r2.place(x=5, y=20)
+b1 = tk.Button(Information, text='清空接收区', width=8, height=1, command=nil)
+b1.place(x=5, y=40)
+b2 = tk.Button(Information, text='保存接收数据', width=8, height=1, command=nil)
+b2.place(x=5, y=65)
 
-var=1
-r1 = tk.Radiobutton(Information, text='文本模式',  variable=var ,value='A', command=nil)
-r1.place(x=0,y=0)
-r2 = tk.Radiobutton(Information, text='HEX模式',variable=var , value='B' ,command=nil )
-r2.place(x=0,y=30)
-
-b1 = tk.Button(Information, text='清空接收区', width=8,
-               height=1, command=nil)
-b1.place(x=0,y=60)
-
-b2 = tk.Button(Information, text='保存接收数据', width=8,
-               height=1, command=nil)
-b2.place(x=0,y=90)
-
-
-# r1 = tk.Radiobutton(Information, text='Option A',  value='A')
-# r1.grid(column=0, row=0,sticky='nw')
-# r2 = tk.Radiobutton(Information, text='Option B', value='B')
-# r2.grid(column=0, row=1,sticky='nw')
-
-#
-# # 第4步，在图形界面上设定输入框控件entry框并放置
-# e = tk.Entry(window, show=None)  # 显示成明文形式
-# e.grid(column=0, row=0,sticky='w')
-#
-# # 第6步，创建并放置两个按钮分别触发两种情况
-# b1 = tk.Button(window, text='Get Serial', width=10,
-#                height=2, command=insert_point)
-# b1.grid(column=0, row=1, sticky='e')
-#
-# b2 = tk.Button(window, text='insert end', width=10,
-#                height=2, command=insert_end)
-# b2.grid(column=0, row=2)
-#
-# b1 = tk.Button(window, text='Open Serial', width=10,
-#                height=2, command=OpenSerial)
-# b1.grid(column=0, row=5)
-#
-# b2 = tk.Button(window, text='Close Serial', width=10,
-#                height=2, command=CloseSerial)
-# b2.grid(column=0, row=6)
-#
-#
-# # 第7步，创建并放置一个多行文本框text用以显示，指定height=3为文本框是三个字符高度
-# t = tk.Text(window, width=50,height=10)
-# t.grid(column=0, row=3,sticky = 's')
-
-
-#
-# numberChosen = ttk.Combobox(window, width=22, textvariable=5)
-# numberChosen['values'] = (1, 2, 4, 42, 100)  # 设置下拉列表的值
-# numberChosen.grid(column=0, row=4)  # 设置其在界面中出现的位置  column代表列   row 代表行
+Information = tk.LabelFrame(window, text="接收缓冲区", width = 490,padx=0, pady=0,height = 140)  # 创建子容器，水平，垂直方向上的边距均为10
+# Information.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
+Information.place(x=5, y=295)
+Information_Window = scrolledtext.ScrolledText(Information, width=50, height=5, padx=0, wrap=tk.WORD)
+Information_Window.place(x=110, y=0)
+Information_Window.config(highlightbackground = 'gray')
+r1 = tk.Radiobutton(Information, text='文本模式',  variable=var, value='A', command=nil)
+r1.place(x=5, y=0)
+r2 = tk.Radiobutton(Information, text='HEX模式', variable=var, value='B', command=nil )
+r2.place(x=5, y=20)
+b1 = tk.Button(Information, text='清空接收区', width=8, height=1, command=nil)
+b1.place(x=5, y=40)
+b2 = tk.Button(Information, text='保存接收数据', width=8, height=1, command=nil)
+b2.place(x=5, y=65)
+b1 = tk.Button(Information, text='发送文件', width=5, height=1, command=nil)
+b1.place(x=5, y=90)
+b2 = tk.Button(Information, text='发送数据', width=5, height=1, command=nil)
+b2.place(x=85, y=90)
+b2 = tk.Button(Information, text='自动发送', width=5, height=1, command=nil)
+b2.place(x=165, y=90)
+l1=tk.Label(Information, text="周期(ms):")  # 创建子容器，水平，垂直方向上的边距均为10
+l1.place(x=245, y=93)
+nameEntered = tk.Entry(Information, width=10)
+nameEntered.place(x=315, y=90)
 
 
 
