@@ -106,65 +106,65 @@ b1.place(x=5, y=40)
 b2 = tk.Button(Information1, text='保存接收数据', width=8, height=1, command=nil)
 b2.place(x=5, y=65)
 
-Information = tk.LabelFrame(window, text="发送缓冲区", width = 490,padx=0, pady=0,height = 140)  # 创建子容器，水平，垂直方向上的边距均为10
-# Information.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
-Information.place(x=5, y=295)
-Information_Window = scrolledtext.ScrolledText(Information, width=50, height=5, padx=0, wrap=tk.WORD)
-Information_Window.place(x=110, y=0)
-Information_Window.config(highlightbackground = 'gray')
-r1 = tk.Radiobutton(Information, text='文本模式',  variable=var, value='A', command=nil)
+Information2 = tk.LabelFrame(window, text="发送缓冲区", width = 490,padx=0, pady=0,height = 140)  # 创建子容器，水平，垂直方向上的边距均为10
+# Information2.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
+Information2.place(x=5, y=295)
+Information2_Window = scrolledtext.ScrolledText(Information2, width=50, height=5, padx=0, wrap=tk.WORD)
+Information2_Window.place(x=110, y=0)
+Information2_Window.config(highlightbackground = 'gray')
+r1 = tk.Radiobutton(Information2, text='文本模式',  variable=var, value='A', command=nil)
 r1.place(x=5, y=0)
-r2 = tk.Radiobutton(Information, text='HEX模式', variable=var, value='B', command=nil )
+r2 = tk.Radiobutton(Information2, text='HEX模式', variable=var, value='B', command=nil )
 r2.place(x=5, y=20)
-b1 = tk.Button(Information, text='清空接收区', width=8, height=1, command=nil)
+b1 = tk.Button(Information2, text='清空接收区', width=8, height=1, command=nil)
 b1.place(x=5, y=40)
-b2 = tk.Button(Information, text='保存接收数据', width=8, height=1, command=nil)
+b2 = tk.Button(Information2, text='保存接收数据', width=8, height=1, command=nil)
 b2.place(x=5, y=65)
-b1 = tk.Button(Information, text='发送文件', width=5, height=1, command=nil)
+b1 = tk.Button(Information2, text='发送文件', width=5, height=1, command=nil)
 b1.place(x=5, y=90)
-b2 = tk.Button(Information, text='发送数据', width=5, height=1, command=nil)
+b2 = tk.Button(Information2, text='发送数据', width=5, height=1, command=nil)
 b2.place(x=85, y=90)
-b2 = tk.Button(Information, text='自动发送', width=5, height=1, command=nil)
+b2 = tk.Button(Information2, text='自动发送', width=5, height=1, command=nil)
 b2.place(x=165, y=90)
-l1=tk.Label(Information, text="周期(ms):")  # 创建子容器，水平，垂直方向上的边距均为10
+l1=tk.Label(Information2, text="周期(ms):")  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=245, y=93)
-nameEntered = tk.Entry(Information, width=10)
+nameEntered = tk.Entry(Information2, width=10)
 nameEntered.place(x=315, y=90)
 
-Information = tk.LabelFrame(window, text="端口管理", width = 490,padx=0, pady=0,height = 75)  # 创建子容器，水平，垂直方向上的边距均为10
-# Information.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
-Information.place(x=5, y=440)
-l1=tk.Label(Information, text='串口:')  # 创建子容器，水平，垂直方向上的边距均为10
+Information3 = tk.LabelFrame(window, text="端口管理", width = 490,padx=0, pady=0,height = 75)  # 创建子容器，水平，垂直方向上的边距均为10
+# Information3.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
+Information3.place(x=5, y=440)
+l1=tk.Label(Information3, text='串口:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=5, y=0)
-numberChosen = ttk.Combobox(Information, width=12, textvariable=5)
+numberChosen = ttk.Combobox(Information3, width=12, textvariable=5)
 numberChosen['values'] = (1, 2, 4, 42, 100)  # 设置下拉列表的值
 numberChosen.place(x=40, y=0)
 
-l1=tk.Label(Information, text='波特率:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1=tk.Label(Information3, text='波特率:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=175,  y=0)
-numberChosen = ttk.Combobox(Information, width=4, textvariable=5)
+numberChosen = ttk.Combobox(Information3, width=4, textvariable=5)
 numberChosen['values'] = (1, 2, 4, 42, 115200)  # 设置下拉列表的值
 numberChosen.place(x=220, y=0)
 
-l1=tk.Label(Information, text='校验位:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1=tk.Label(Information3, text='校验位:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=280, y=0)
-numberChosen = ttk.Combobox(Information, width=2, textvariable=5)
+numberChosen = ttk.Combobox(Information3, width=2, textvariable=5)
 numberChosen['values'] = (1, 2, 4, 4, 5)  # 设置下拉列表的值
 numberChosen.place(x=330, y=0)
 
-l1=tk.Label(Information, text='停止位:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1=tk.Label(Information3, text='停止位:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=375, y=0)
-numberChosen = ttk.Combobox(Information, width=2, textvariable=5)
+numberChosen = ttk.Combobox(Information3, width=2, textvariable=5)
 numberChosen['values'] = (1, 2, 4, 42, 1)  # 设置下拉列表的值
 numberChosen.place(x=420, y=0)
 
-b2 = tk.Button(Information, text='打开串口', width=5, height=1, command=nil)
+b2 = tk.Button(Information3, text='打开串口', width=5, height=1, command=nil)
 b2.place(x=5, y=25)
-l1 = tk.Label(Information, text='信息:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1 = tk.Label(Information3, text='信息:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=90, y=30)
-l1 = tk.Label(Information, text='打开串口成功')  # 创建子容器，水平，垂直方向上的边距均为10
+l1 = tk.Label(Information3, text='打开串口成功')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=130, y=30)
-b2 = tk.Button(Information, text='清零', width=3, height=1, command=nil)
+b2 = tk.Button(Information3, text='清零', width=3, height=1, command=nil)
 b2.place(x=410, y=25)
 
 debug = 0
@@ -183,6 +183,7 @@ def nil1(self):
     windowFormHeight = h
     fw = fw + rw
     fh = fh + rh
+    Information1.config(width = fw,height = fh)
 
 
 
