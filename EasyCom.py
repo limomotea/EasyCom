@@ -6,8 +6,10 @@ from tkinter import *
 from tkinter import scrolledtext
 from tkinter import ttk
 global ser
-global debug, windowFormWidth, windowFormHeight,serialOpenOrClose
+global debug, windowFormWidth, windowFormHeight,serialOpenOrClose,serialAutoSendState,autoSendAfterHL
 serialOpenOrClose = ' '
+serialAutoSendState = ' '
+autoSendAfterHL = ''
 
 
 def serialSelectFun(self):
@@ -45,8 +47,8 @@ def windowReSize(self):
     newwidth = int((w-120) / 7.3)
     newheight = int((fh-10) / 15.8)
 
-    Information1_text.config(width = newwidth,height = newheight)
-    Information2_text.config(width = newwidth)
+    serialSendDataScrolledText.config(width = newwidth,height = newheight)
+    serialSendDataScrolledText.config(width = newwidth)
 
     # text = 'resize w: {0} H: {1}'.format(w, h)
     # print(text)
@@ -102,6 +104,45 @@ def OpenOrCloseSerialFun():
         serialOpenOrClose = 'open'
         OpenOrCloseSerialButton.config(text='打开串口')
     return
+
+
+def serialSendDataFUN():
+    if ser.isOpen():
+        text_send = serialSendDataScrolledText.get('1.0', 'end-1c')
+        result = ser.write(text_send.encode('utf-8'))
+        print(result)
+    else:
+        logtext.config(text='请先打开串口')
+    return
+
+
+def autoSendRunFUN():
+    global serialAutoSendState,autoSendAfterHL
+    autoSendTimedata_ms = int(autoSendTimeForm.get())
+    if ser.isOpen():
+        text_send = serialSendDataScrolledText.get('1.0', 'end-1c')
+        result = ser.write(text_send.encode('utf-8'))
+        print(result)
+        autoSendAfterHL = window.after(autoSendTimedata_ms,autoSendRunFUN)
+    else:
+        logtext.config(text='请先打开串口')
+        serialAutoSendState = 'STOP'
+        autoSendButtonForm.config(text='自动发送')
+
+
+def autoSendFUN():
+    global serialAutoSendState,autoSendAfterHL
+    if serialAutoSendState != 'RUN':
+        autoSendRunFUN()
+        serialAutoSendState = 'RUN'
+        autoSendButtonForm.config(text='停止自动')
+    else:
+        window.after_cancel(autoSendAfterHL)
+        serialAutoSendState = 'STOP'
+        autoSendButtonForm.config(text='自动发送')
+    return
+    return
+
 
 def insert_end():  # 在文本框内容最后接着插入输入内容
     # 十六进制的发送
@@ -160,10 +201,9 @@ b2.place(x=5, y=65)
 Information2 = tk.LabelFrame(window, text="发送缓冲区", width = 490,padx=0, pady=0,height = 140)  # 创建子容器，水平，垂直方向上的边距均为10
 # Information2.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
 Information2.place(x=5, y=295)
-Information2_text = scrolledtext.ScrolledText(Information2, width=50, height=5, padx=0, wrap=tk.WORD)
-Information2_text.place(x=110, y=0)
-
-Information2_text.config(highlightbackground = 'gray')
+serialSendDataScrolledText = scrolledtext.ScrolledText(Information2, width=50, height=5, padx=0, wrap=tk.WORD)
+serialSendDataScrolledText.place(x=110, y=0)
+serialSendDataScrolledText.config(highlightbackground = 'gray')
 r1 = tk.Radiobutton(Information2, text='文本模式',  variable=var, value='A', command=nil)
 r1.place(x=5, y=0)
 r2 = tk.Radiobutton(Information2, text='HEX模式', variable=var, value='B', command=nil )
@@ -174,14 +214,14 @@ b2 = tk.Button(Information2, text='保存接收数据', width=8, height=1, comma
 b2.place(x=5, y=65)
 b1 = tk.Button(Information2, text='发送文件', width=5, height=1, command=nil)
 b1.place(x=5, y=90)
-b2 = tk.Button(Information2, text='发送数据', width=5, height=1, command=nil)
-b2.place(x=85, y=90)
-b2 = tk.Button(Information2, text='自动发送', width=5, height=1, command=nil)
-b2.place(x=165, y=90)
-l1=tk.Label(Information2, text="周期(ms):")  # 创建子容器，水平，垂直方向上的边距均为10
-l1.place(x=245, y=93)
-nameEntered = tk.Entry(Information2, width=10)
-nameEntered.place(x=315, y=90)
+serialSendDataButton = tk.Button(Information2, text='发送数据', width=5, height=1, command=serialSendDataFUN)
+serialSendDataButton.place(x=85, y=90)
+autoSendButtonForm = tk.Button(Information2, text='自动发送', width=5, height=1, command=autoSendFUN)
+autoSendButtonForm.place(x=165, y=90)
+autoSendlabelForm=tk.Label(Information2, text="周期(ms):")  # 创建子容器，水平，垂直方向上的边距均为10
+autoSendlabelForm.place(x=245, y=93)
+autoSendTimeForm = tk.Entry(Information2, width=10)
+autoSendTimeForm.place(x=315, y=90)
 
 Information3 = tk.LabelFrame(window, text="端口管理", width = 490,padx=0, pady=0,height = 75)  # 创建子容器，水平，垂直方向上的边距均为10
 # Information3.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
