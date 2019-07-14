@@ -8,46 +8,64 @@ from tkinter import ttk
 global ser
 global debug, windowFormWidth, windowFormHeight
 
-
-# 第1步，实例化object，建立窗口window
-window = tk.Tk() ##
-
-
-
-# 第2步，给窗口的可视化起名字
-window.title('My Window')
+def serialSelectFun(self):
+    texttemp = '选中串口：' + serialSelect.get()
+    print(texttemp)
+    logtext.config(text=texttemp)
+    return
 
 
-# 第3步，设定窗口的大小(长 * 宽)
-window.geometry('500x520')  # 这里的乘是小x
+def windowReSize(self):
+    global debug, windowFormHeight, windowFormWidth,fw,fh
+    w = window.winfo_width()
+    h = window.winfo_height()
+    getdata = Information1.config()
+    rw = w - windowFormWidth
+    rh = h - windowFormHeight
+    windowFormWidth = w
+    windowFormHeight = h
+    fw = getdata['width'][-1] + rw
+    fh = getdata['height'][-1] + rh
+    Information1.config(width = fw,height = fh)
 
+    fw = getdata['width'][-1] + rw
+    Information2.config(width = fw)
+    getdata = Information2.place_info()
+    newy = int(getdata['y']) + rh
+    Information2.place(y = newy)
 
+    Information3.config(width = fw)
+    getdata = Information3.place_info()
+    newy = int(getdata['y']) + rh
+    Information3.place(y = newy)
 
+    # getdata = Information2_text.config()
+    newwidth = int((w-120) / 7.3)
+    newheight = int((fh-10) / 15.8)
+
+    Information1_text.config(width = newwidth,height = newheight)
+    Information2_text.config(width = newwidth)
+
+    # text = 'resize w: {0} H: {1}'.format(w, h)
+    # print(text)
+    return
 
 # 第5步，定义两个触发事件时的函数insert_point和insert_end（注意：因为Python的执行顺序是从上往下，所以函数一定要放在按钮的上面）
-def insert_point():  # 在鼠标焦点处插入输入内容
-    var = e.get()
-    t.insert('insert', var)
+def getSerialList():  # 在鼠标焦点处插入输入内容
     port_list = list(serial.tools.list_ports.comports())
     print(port_list)
     if len(port_list) == 0:
-
         print('无可用串口')
-    else: #
-        t.delete(1.0,'end')
-        for i in range(0, len(port_list)):
-            print(port_list[i])
-            var = port_list[i]
-            t.insert('insert', var)
-            t.insert('insert', '\n')
+        logtext.config(text='无可用串口')
+    else:
         numberChosen.textvariable = len(port_list)
         list_portname = []
         for eachPort in port_list:
             list_portname.append(eachPort.device)
-        numberChosen['values'] = list_portname  # 设置下拉列表的值
-        numberChosen.current(0)  # 设置下拉列表默认显示的值，0为 numberChosen['values'] 的下标值
+        serialSelect['values'] = list_portname  # 设置下拉列表的值
+        serialSelect.current(0)  # 设置下拉列表默认显示的值，0为 numberChosen['values'] 的下标值
 
-def OpenSerial():
+def openSerial():
     global ser
     try:
         port_list = list(serial.tools.list_ports.comports())
@@ -89,6 +107,22 @@ def insert_end():  # 在文本框内容最后接着插入输入内容
 
 def nil():
     return()
+
+
+def clearAll():
+    logtext.config(text='aaaa')
+    return
+
+
+
+
+# 第1步，实例化object，建立窗口window
+window = tk.Tk() ##
+# 第2步，给窗口的可视化起名字
+window.title('My Window')
+# 第3步，设定窗口的大小(长 * 宽)
+window.geometry('500x520')  # 这里的乘是小x
+
 
 var = 1
 Information1 = tk.LabelFrame(window, text="接收缓冲区", width = 490,padx=0, pady=0,height = 290)  # 创建子容器，水平，垂直方向上的边距均为10
@@ -137,9 +171,10 @@ Information3 = tk.LabelFrame(window, text="端口管理", width = 490,padx=0, pa
 Information3.place(x=5, y=440)
 l1=tk.Label(Information3, text='串口:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=5, y=0)
-numberChosen = ttk.Combobox(Information3, width=12, textvariable=5)
-numberChosen['values'] = (1, 2, 4, 42, 100)  # 设置下拉列表的值
-numberChosen.place(x=40, y=0)
+serialSelect = ttk.Combobox(Information3, width=12, textvariable=5)
+serialSelect['values'] = (1, 2, 4, 42, 100)  # 设置下拉列表的值
+serialSelect.place(x=40, y=0)
+serialSelect.bind("<<ComboboxSelected>>", serialSelectFun)
 
 l1=tk.Label(Information3, text='波特率:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=175,  y=0)
@@ -159,13 +194,13 @@ numberChosen = ttk.Combobox(Information3, width=2, textvariable=5)
 numberChosen['values'] = (1, 2, 4, 42, 1)  # 设置下拉列表的值
 numberChosen.place(x=420, y=0)
 
-b2 = tk.Button(Information3, text='打开串口', width=5, height=1, command=nil)
+b2 = tk.Button(Information3, text='打开串口', width=5, height=1, command=openSerial)
 b2.place(x=5, y=25)
 l1 = tk.Label(Information3, text='信息:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=90, y=30)
-l1 = tk.Label(Information3, text='打开串口成功')  # 创建子容器，水平，垂直方向上的边距均为10
-l1.place(x=130, y=30)
-b2 = tk.Button(Information3, text='清零', width=3, height=1, command=nil)
+logtext = tk.Label(Information3, text='打开串口成功')  # 创建子容器，水平，垂直方向上的边距均为10
+logtext.place(x=130, y=30)
+b2 = tk.Button(Information3, text='清零', width=3, height=1, command=clearAll)
 b2.place(x=410, y=25)
 
 debug = 0
@@ -174,56 +209,22 @@ windowFormHeight = 520
 fw = 490
 fh = 290
 
-def nil1(self):
-    global debug, windowFormHeight, windowFormWidth,fw,fh
-    w = window.winfo_width()
-    h = window.winfo_height()
-    getdata = Information1.config()
-    rw = w - windowFormWidth
-    rh = h - windowFormHeight
-    windowFormWidth = w
-    windowFormHeight = h
-    fw = getdata['width'][-1] + rw
-    fh = getdata['height'][-1] + rh
-    Information1.config(width = fw,height = fh)
 
-    fw = getdata['width'][-1] + rw
-    Information2.config(width = fw)
-    getdata = Information2.place_info()
-    newy = int(getdata['y']) + rh
-    Information2.place(y = newy)
 
-    Information3.config(width = fw)
-    getdata = Information3.place_info()
-    newy = int(getdata['y']) + rh
-    Information3.place(y = newy)
+def checkSerialReceiverData():
+    global debug
+    debug += 1
+    # logtext.config(text='Time:{0}'.format(debug))
+    window.after(100, checkSerialReceiverData)  # add_letter will run as soon as the mainloop starts.
 
-    # getdata = Information2_text.config()
-    newwidth = int((w-120) / 7.3)
-    newheight = int((fh-10) / 15.8)
 
-    Information1_text.config(width = newwidth,height = newheight)
-    Information2_text.config(width = newwidth)
+logtext.config(text='gggg')
 
 
 
+getSerialList()
+checkSerialReceiverData()
 
-
-    text = ''
-    text = 'resize w: {0} H: {1}'.format(w, h)
-    print(text)
-
-
-
-    return
-
-
-window.bind("<Configure>", nil1)
-
-
-def resize(w, h, w_box, h_box, pil_image):
-    print('window resize')
-
-
+window.bind("<Configure>", windowReSize)
 # 第8步，主窗口循环显示
 window.mainloop()
