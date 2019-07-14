@@ -6,7 +6,9 @@ from tkinter import *
 from tkinter import scrolledtext
 from tkinter import ttk
 global ser
-global debug, windowFormWidth, windowFormHeight
+global debug, windowFormWidth, windowFormHeight,serialOpenOrClose
+serialOpenOrClose = ' '
+
 
 def serialSelectFun(self):
     texttemp = '选中串口：' + serialSelect.get()
@@ -67,24 +69,39 @@ def getSerialList():  # 在鼠标焦点处插入输入内容
 
 def openSerial():
     global ser
+    # current()
     try:
-        port_list = list(serial.tools.list_ports.comports())
-        portx = port_list[1].device
-        print(portx)
+
+        # port_list = list(serial.tools.list_ports.comports())
+        # portx = port_list[1].device
+        portx = serialSelect.get()
         bps = 115200
         # 超时设置,None：永远等待操作，0为立即返回请求结果，其他值为等待超时时间(单位为秒）
         timex = 1
         ser = serial.Serial(portx, bps, timeout=timex,write_timeout=timex)
         print("串口详情参数：", ser)
-
+        logtext.config(text='串口打开成功')
     except Exception as e:
-        print("---异常---：", e)
+        print("串口打开错误", e)
+        logtext.config(text='串口打开错误')
 
 def CloseSerial():
     global ser
     ser.close()  # 关闭串口
-    print('ser colsed')
+    print("串口关闭")
+    logtext.config(text='串口关闭')
 
+def OpenOrCloseSerialFun():
+    global serialOpenOrClose
+    if serialOpenOrClose != 'close':
+        openSerial()
+        serialOpenOrClose = 'close'
+        OpenOrCloseSerialButton.config(text='关闭串口')
+    else:
+        CloseSerial()
+        serialOpenOrClose = 'open'
+        OpenOrCloseSerialButton.config(text='打开串口')
+    return
 
 def insert_end():  # 在文本框内容最后接着插入输入内容
     # 十六进制的发送
@@ -194,13 +211,13 @@ numberChosen = ttk.Combobox(Information3, width=2, textvariable=5)
 numberChosen['values'] = (1, 2, 4, 42, 1)  # 设置下拉列表的值
 numberChosen.place(x=420, y=0)
 
-b2 = tk.Button(Information3, text='打开串口', width=5, height=1, command=openSerial)
-b2.place(x=5, y=25)
+OpenOrCloseSerialButton = tk.Button(Information3, text='打开串口', width=5, height=1, command=OpenOrCloseSerialFun)
+OpenOrCloseSerialButton.place(x=5, y=25)
 l1 = tk.Label(Information3, text='信息:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=90, y=30)
 logtext = tk.Label(Information3, text='打开串口成功')  # 创建子容器，水平，垂直方向上的边距均为10
 logtext.place(x=130, y=30)
-b2 = tk.Button(Information3, text='清零', width=3, height=1, command=clearAll)
+b2 = tk.Button(Information3, text='清零', width=3, height=1, command=CloseSerial)
 b2.place(x=410, y=25)
 
 debug = 0
