@@ -47,7 +47,7 @@ def windowReSize(self):
     newwidth = int((w-120) / 7.3)
     newheight = int((fh-10) / 15.8)
 
-    serialSendDataScrolledText.config(width = newwidth,height = newheight)
+    serialReceiveDataTextForm.config(width = newwidth,height = newheight)
     serialSendDataScrolledText.config(width = newwidth)
 
     # text = 'resize w: {0} H: {1}'.format(w, h)
@@ -186,9 +186,9 @@ var = 1
 Information1 = tk.LabelFrame(window, text="接收缓冲区", width = 490,padx=0, pady=0,height = 290)  # 创建子容器，水平，垂直方向上的边距均为10
 # Information.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
 Information1.place(x=5, y=0)
-Information1_text = scrolledtext.ScrolledText(Information1, width=50, height=17, padx=0, wrap=tk.WORD)
-Information1_text.place(x=110, y=0)
-Information1_text.config(highlightbackground = 'gray')
+serialReceiveDataTextForm = scrolledtext.ScrolledText(Information1, width=50, height=17, padx=0, wrap=tk.WORD)
+serialReceiveDataTextForm.place(x=110, y=0)
+serialReceiveDataTextForm.config(highlightbackground = 'gray')
 r1 = tk.Radiobutton(Information1, text='文本模式',  variable=var, value='A', command=nil)
 r1.place(x=5, y=0)
 r2 = tk.Radiobutton(Information1, text='HEX模式', variable=var, value='B', command=nil )
@@ -267,12 +267,19 @@ fw = 490
 fh = 290
 
 
-
 def checkSerialReceiverData():
-    global debug
-    debug += 1
+    try:
+        if ser.isOpen():
+            print('ready')
+            if ser.in_waiting() > 0:
+                serReadData = ser.read(ser.in_waiting())
+                serialReceiveDataTextForm.insert(END, serReadData)
+                print('getdata')
+        window.after(100, checkSerialReceiverData)  # add_letter will run as soon as the mainloop starts.
+    except:
+        window.after(100, checkSerialReceiverData)  # add_letter will run as soon as the mainloop starts.
+
     # logtext.config(text='Time:{0}'.format(debug))
-    window.after(100, checkSerialReceiverData)  # add_letter will run as soon as the mainloop starts.
 
 
 logtext.config(text='gggg')
