@@ -8,10 +8,10 @@ from tkinter import ttk
 from typing import Any
 
 global ser
-global debug, windowFormWidth, windowFormHeight,serialOpenOrClose,serialAutoSendState,autoSendAfterHL
-serialOpenOrClose = ' '
-serialAutoSendState = ' '
-autoSendAfterHL = ''
+global debug, windowFormWidth, windowFormHeight,serial_OpenOrClose,serial_AutoSendState,auto_SendAfterHL
+serial_OpenOrClose = ' '
+serial_AutoSendState = ' '
+auto_SendAfterHL = ''
 
 
 def FormInit():
@@ -87,6 +87,16 @@ def getSerialList():  # 在鼠标焦点处插入输入内容
         serialSelectPortForm.current(0)  # 设置下拉列表默认显示的值，0为 numberChosen['values'] 的下标值
 
 
+def getStopBits():
+    val = {'1位' : serial.STOPBITS_ONE, '1.5位' : serial.STOPBITS_ONE_POINT_FIVE, '2位' : serial.STOPBITS_TWO,}
+    return val.get(selectSerialStopBitForm.get(), serial.STOPBITS_ONE)
+
+
+def getParityVal():
+    val = {'无校验': serial.PARITY_NONE, '奇校验': serial.PARITY_ODD, '偶校验': serial.PARITY_EVEN, '1校验': serial.PARITY_MARK, '0校验': serial.PARITY_SPACE, }
+    return val.get(selectSerialParityCheckForm.get(), serial.PARITY_NONE)
+
+
 def openSerial():
     global ser
     # current()
@@ -113,14 +123,14 @@ def CloseSerial():
 
 
 def OpenOrCloseSerialFun():
-    global serialOpenOrClose
-    if serialOpenOrClose != 'close':
+    global serial_OpenOrClose
+    if serial_OpenOrClose != 'close':
         openSerial()
-        serialOpenOrClose = 'close'
+        serial_OpenOrClose = 'close'
         OpenOrCloseSerialButton.config(text='关闭串口')
     else:
         CloseSerial()
-        serialOpenOrClose = 'open'
+        serial_OpenOrClose = 'open'
         OpenOrCloseSerialButton.config(text='打开串口')
     return
 
@@ -140,24 +150,24 @@ def serialSendFileFun():
 
 
 def autoSendRunFUN():
-    global serialAutoSendState,autoSendAfterHL
+    global serial_AutoSendState,auto_SendAfterHL
     try:
         autoSendTimedata_ms = int(autoSendTimeForm.get())
         if ser.isOpen():
             text_send = serialSendDataScrolledText.get('1.0', 'end-1c')
             result = ser.write(text_send.encode('utf-8'))
             print(result)
-            autoSendAfterHL = window.after(autoSendTimedata_ms,autoSendRunFUN)
+            auto_SendAfterHL = window.after(autoSendTimedata_ms, autoSendRunFUN)
             return(True)
         else:
             logtext.config(text='请先打开串口')
-            serialAutoSendState = 'STOP'
+            serial_AutoSendState = 'STOP'
             autoSendButtonForm.config(text='自动发送')
             serialSendDataButton.config(state=NORMAL)
             serialSendFileButton.config(state=NORMAL)
     except:
         logtext.config(text='请先打开串口或选择正确的重复时间')
-        serialAutoSendState = 'STOP'
+        serial_AutoSendState = 'STOP'
         autoSendButtonForm.config(text='自动发送')
         serialSendDataButton.config(state=NORMAL)
         serialSendFileButton.config(state=NORMAL)
@@ -165,19 +175,19 @@ def autoSendRunFUN():
 
 
 def autoSendFUN():
-    global serialAutoSendState,autoSendAfterHL
-    if serialAutoSendState != 'RUN':
+    global serial_AutoSendState,auto_SendAfterHL
+    if serial_AutoSendState != 'RUN':
         isAutoSendOk = autoSendRunFUN()
         if isAutoSendOk:
-            serialAutoSendState = 'RUN'
+            serial_AutoSendState = 'RUN'
             autoSendButtonForm.config(text='停止自动')
             serialSendDataButton.config(state=DISABLED)
             serialSendFileButton.config(state=DISABLED)
         else:
             return
     else:
-        window.after_cancel(autoSendAfterHL)
-        serialAutoSendState = 'STOP'
+        window.after_cancel(auto_SendAfterHL)
+        serial_AutoSendState = 'STOP'
         autoSendButtonForm.config(text='自动发送')
         serialSendDataButton.config(state=NORMAL)
         serialSendFileButton.config(state=NORMAL)
