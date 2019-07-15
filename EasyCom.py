@@ -5,6 +5,8 @@ import serial.tools.list_ports
 from tkinter import *
 from tkinter import scrolledtext
 from tkinter import ttk
+from typing import Any
+
 global ser
 global debug, windowFormWidth, windowFormHeight,serialOpenOrClose,serialAutoSendState,autoSendAfterHL
 serialOpenOrClose = ' '
@@ -27,7 +29,7 @@ def serialSendDataTextFormDeleteAllFun():
     return
 
 
-def serialSelectFun(self):
+def serialSelectPortFormFun(self):
     texttemp = '选中串口：' + serialSelect.get()
     print(texttemp)
     logtext.config(text=texttemp)
@@ -78,26 +80,24 @@ def getSerialList():  # 在鼠标焦点处插入输入内容
         print('无可用串口')
         logtext.config(text='无可用串口')
     else:
-        numberChosen.textvariable = len(port_list)
-        list_portname = []
+        list_port_name = []  # type: Any
         for eachPort in port_list:
-            list_portname.append(eachPort.device)
-        serialSelect['values'] = list_portname  # 设置下拉列表的值
-        serialSelect.current(0)  # 设置下拉列表默认显示的值，0为 numberChosen['values'] 的下标值
+            list_port_name.append(eachPort.device)
+        serialSelectPortForm['values'] = list_port_name  # 设置下拉列表的值
+        serialSelectPortForm.current(0)  # 设置下拉列表默认显示的值，0为 numberChosen['values'] 的下标值
 
 
 def openSerial():
     global ser
     # current()
     try:
-
-        # port_list = list(serial.tools.list_ports.comports())
-        # portx = port_list[1].device
-        portx = serialSelect.get()
-        bps = 115200
+        selected_port = serialSelectPortForm.get()  # type: selected_port
+        bps = int(selectSerialBaudRateForm.get())
+        stop_bits_val = getStopBits()
+        parity_val = getParityVal()
         # 超时设置,None：永远等待操作，0为立即返回请求结果，其他值为等待超时时间(单位为秒）
-        timex = 1
-        ser = serial.Serial(portx, bps, timeout=timex,write_timeout=timex)
+        timex = 5
+        ser = serial.Serial(selected_port, bps, parity=parity_val, stopbits=stop_bits_val, timeout=timex,write_timeout=timex)
         print("串口详情参数：", ser)
         logtext.config(text='串口打开成功')
     except Exception as e:
@@ -229,9 +229,9 @@ Information1.place(x=5, y=0)
 serialReceiveDataTextForm = scrolledtext.ScrolledText(Information1, width=50, height=17, padx=0, wrap=tk.WORD)
 serialReceiveDataTextForm.place(x=110, y=0)
 serialReceiveDataTextForm.config(highlightbackground = 'gray')
-r1 = tk.Radiobutton(Information1, text='文本模式',  variable=var, value='A', command=nil)
+r1 = tk.Radiobutton(Information1, text='文本模式',  variable=11, value='A', command=nil)
 r1.place(x=5, y=0)
-r2 = tk.Radiobutton(Information1, text='HEX模式', variable=var, value='B', command=nil )
+r2 = tk.Radiobutton(Information1, text='HEX模式', variable=11, value='B', command=nil )
 r2.place(x=5, y=20)
 serialReceiveDataTextFormDeleteAllButton = tk.Button(Information1, text='清空接收区', width=8, height=1, command=serialReceiveDataTextFormDeleteAllFun)
 serialReceiveDataTextFormDeleteAllButton.place(x=5, y=40)
@@ -244,9 +244,9 @@ Information2.place(x=5, y=295)
 serialSendDataTextForm = scrolledtext.ScrolledText(Information2, width=50, height=5, padx=0, wrap=tk.WORD)
 serialSendDataTextForm.place(x=110, y=0)
 serialSendDataTextForm.config(highlightbackground = 'gray')
-r1 = tk.Radiobutton(Information2, text='文本模式',  variable=var, value='A', command=nil)
+r1 = tk.Radiobutton(Information2, text='文本模式',  variable=12, value='A', command=nil)
 r1.place(x=5, y=0)
-r2 = tk.Radiobutton(Information2, text='HEX模式', variable=var, value='B', command=nil )
+r2 = tk.Radiobutton(Information2, text='HEX模式', variable=12, value='B', command=nil )
 r2.place(x=5, y=20)
 b1 = tk.Button(Information2, text='清空接收区', width=8, height=1, command=serialSendDataTextFormDeleteAllFun)
 b1.place(x=5, y=40)
@@ -268,28 +268,31 @@ Information3 = tk.LabelFrame(window, text="端口管理", width = 490,padx=0, pa
 Information3.place(x=5, y=440)
 l1=tk.Label(Information3, text='串口:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=5, y=0)
-serialSelect = ttk.Combobox(Information3, width=12, textvariable=5)
-serialSelect['values'] = (1, 2, 4, 42, 100)  # 设置下拉列表的值
-serialSelect.place(x=40, y=0)
-serialSelect.bind("<<ComboboxSelected>>", serialSelectFun)
+serialSelectPortForm = ttk.Combobox(Information3, width=12, textvariable=1)
+serialSelectPortForm['values'] = (1, 2, 4, 42, 100)  # 设置下拉列表的值
+serialSelectPortForm.place(x=40, y=0)
+serialSelectPortForm.bind("<<ComboboxSelected>>", serialSelectPortFormFun)
 
 l1=tk.Label(Information3, text='波特率:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=175,  y=0)
-numberChosen = ttk.Combobox(Information3, width=4, textvariable=5)
-numberChosen['values'] = (1, 2, 4, 42, 115200)  # 设置下拉列表的值
-numberChosen.place(x=220, y=0)
+selectSerialBaudRateForm = ttk.Combobox(Information3, width=4, textvariable=2)
+selectSerialBaudRateForm['values'] = (600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200, 230400, 460800)  # 设置下拉列表的值
+selectSerialBaudRateForm.place(x=220, y=0)
+selectSerialBaudRateForm.current(10)
 
 l1=tk.Label(Information3, text='校验位:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=280, y=0)
-numberChosen = ttk.Combobox(Information3, width=2, textvariable=5)
-numberChosen['values'] = (1, 2, 4, 4, 5)  # 设置下拉列表的值
-numberChosen.place(x=330, y=0)
+selectSerialParityCheckForm = ttk.Combobox(Information3, width=2, textvariable=3)
+selectSerialParityCheckForm['values'] = ('无校验', '奇校验', '偶校验', '1校验', '0校验')  # 设置下拉列表的值
+selectSerialParityCheckForm.place(x=330, y=0)
+selectSerialParityCheckForm.current(0)
 
 l1=tk.Label(Information3, text='停止位:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=375, y=0)
-numberChosen = ttk.Combobox(Information3, width=2, textvariable=5)
-numberChosen['values'] = (1, 2, 4, 42, 1)  # 设置下拉列表的值
-numberChosen.place(x=420, y=0)
+selectSerialStopBitForm = ttk.Combobox(Information3, width=2, textvariable=4)
+selectSerialStopBitForm['values'] = ('1位', '1.5位', '2位')  # 设置下拉列表的值
+selectSerialStopBitForm.place(x=420, y=0)
+selectSerialStopBitForm.current(0)
 
 OpenOrCloseSerialButton = tk.Button(Information3, text='打开串口', width=5, height=1, command=OpenOrCloseSerialFun)
 OpenOrCloseSerialButton.place(x=5, y=25)
