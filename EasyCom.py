@@ -1,18 +1,34 @@
 import tkinter as tk  # 使用Tkinter前需要先导入
-
 import serial
 import serial.tools.list_ports
+from tkinter import filedialog
 from tkinter import *
 from tkinter import scrolledtext
 from tkinter import ttk
 from typing import Any
 
-global ser
-global debug, windowFormWidth, windowFormHeight,serial_OpenOrClose,serial_AutoSendState,auto_SendAfterHL
+global serialPortOpenHl
+global debug, windowFormWidth, windowFormHeight, serial_OpenOrClose, serial_AutoSendState, auto_SendAfterHL
 serial_OpenOrClose = ' '
 serial_AutoSendState = ' '
 auto_SendAfterHL = ''
+serialPortOpenHl = ''
 
+
+def saveReceiveDataToFileFun():
+    save_file_path = tk.filedialog.asksaveasfilename(defaultextension=".txt")
+    with open(save_file_path, 'w', encoding='utf-8') as afile:
+        afile.write(serialReceiveDataTextForm.get(1.0, END))
+        afile.close()
+    return
+
+
+def saveSendDataToFileFun():
+    save_file_path = tk.filedialog.asksaveasfilename(defaultextension=".txt")
+    with open(save_file_path, 'w', encoding='utf-8') as afile:
+        afile.write(serialSendDataTextForm.get(1.0, END))
+        afile.close()
+    return
 
 def FormInit():
     autoSendTimeForm.insert(END, '100')
@@ -32,7 +48,7 @@ def serialSendDataTextFormDeleteAllFun():
 def serialSelectPortFormFun(self):
     texttemp = '选中串口：' + serialSelect.get()
     print(texttemp)
-    logtext.config(text=texttemp)
+    logTextForm.config(text=texttemp)
     return
 
 
@@ -78,7 +94,7 @@ def getSerialList():  # 在鼠标焦点处插入输入内容
     print(port_list)
     if len(port_list) == 0:
         print('无可用串口')
-        logtext.config(text='无可用串口')
+        logTextForm.config(text='无可用串口')
     else:
         list_port_name = []  # type: Any
         for eachPort in port_list:
@@ -98,7 +114,7 @@ def getParityVal():
 
 
 def openSerial():
-    global ser
+    global serialPortOpenHl
     # current()
     try:
         selected_port = serialSelectPortForm.get()  # type: selected_port
@@ -107,19 +123,19 @@ def openSerial():
         parity_val = getParityVal()
         # 超时设置,None：永远等待操作，0为立即返回请求结果，其他值为等待超时时间(单位为秒）
         timex = 5
-        ser = serial.Serial(selected_port, bps, parity=parity_val, stopbits=stop_bits_val, timeout=timex,write_timeout=timex)
-        print("串口详情参数：", ser)
-        logtext.config(text='串口打开成功')
+        serialPortOpenHl = serial.Serial(selected_port, bps, parity=parity_val, stopbits=stop_bits_val, timeout=timex, write_timeout=timex)
+        print("串口详情参数：", serialPortOpenHl)
+        logTextForm.config(text='串口打开成功')
     except Exception as e:
         print("串口打开错误", e)
-        logtext.config(text='串口打开错误')
+        logTextForm.config(text='串口打开错误')
 
 
 def CloseSerial():
-    global ser
-    ser.close()  # 关闭串口
+    global serialPortOpenHl
+    serialPortOpenHl.close()  # 关闭串口
     print("串口关闭")
-    logtext.config(text='串口关闭')
+    logTextForm.config(text='串口关闭')
 
 
 def OpenOrCloseSerialFun():
@@ -136,12 +152,12 @@ def OpenOrCloseSerialFun():
 
 
 def serialSendDataFUN():
-    if ser.isOpen():
+    if serialPortOpenHl.isOpen():
         text_send = serialSendDataScrolledText.get('1.0', 'end-1c')
-        result = ser.write(text_send.encode('utf-8'))
+        result = serialPortOpenHl.write(text_send.encode('utf-8'))
         print(result)
     else:
-        logtext.config(text='请先打开串口')
+        logTextForm.config(text='请先打开串口')
     return
 
 
@@ -153,20 +169,20 @@ def autoSendRunFUN():
     global serial_AutoSendState,auto_SendAfterHL
     try:
         autoSendTimedata_ms = int(autoSendTimeForm.get())
-        if ser.isOpen():
+        if serialPortOpenHl.isOpen():
             text_send = serialSendDataScrolledText.get('1.0', 'end-1c')
-            result = ser.write(text_send.encode('utf-8'))
+            result = serialPortOpenHl.write(text_send.encode('utf-8'))
             print(result)
             auto_SendAfterHL = window.after(autoSendTimedata_ms, autoSendRunFUN)
             return(True)
         else:
-            logtext.config(text='请先打开串口')
+            logTextForm.config(text='请先打开串口')
             serial_AutoSendState = 'STOP'
             autoSendButtonForm.config(text='自动发送')
             serialSendDataButton.config(state=NORMAL)
             serialSendFileButton.config(state=NORMAL)
     except:
-        logtext.config(text='请先打开串口或选择正确的重复时间')
+        logTextForm.config(text='请先打开串口或选择正确的重复时间')
         serial_AutoSendState = 'STOP'
         autoSendButtonForm.config(text='自动发送')
         serialSendDataButton.config(state=NORMAL)
@@ -194,15 +210,15 @@ def autoSendFUN():
     return
 
 
-def insert_end():  # 在文本框内容最后接着插入输入内容
+def insert_end():
     # 十六进制的发送
     for i in range(10):
-        if ser.isOpen():
+        if serialPortOpenHl.isOpen():
             print('ser is open', i)
             # result = ser.write("I am LGS.test long string\n".encode('utf-8'))
             # print(result)
             text = 'I am LGS.test long string. num = {0}\n'.format(i)
-            result = ser.write(text.encode('utf-8'))
+            result = serialPortOpenHl.write(text.encode('utf-8'))
             print(result)
     # print("Test", result)
     result = 1
@@ -218,7 +234,7 @@ def nil():
 
 
 def clearAll():
-    logtext.config(text='aaaa')
+    logTextForm.config(text='aaaa')
     return
 
 
@@ -233,34 +249,33 @@ window.geometry('500x520')  # 这里的乘是小x
 
 
 var = 1
-Information1 = tk.LabelFrame(window, text="接收缓冲区", width = 490,padx=0, pady=0,height = 290)  # 创建子容器，水平，垂直方向上的边距均为10
-# Information.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
+Information1 = tk.LabelFrame(window, text="接收缓冲区", width=490, padx=0, pady=0, height=290)  # 创建子容器，水平，垂直方向上的边距均为10
 Information1.place(x=5, y=0)
 serialReceiveDataTextForm = scrolledtext.ScrolledText(Information1, width=50, height=17, padx=0, wrap=tk.WORD)
 serialReceiveDataTextForm.place(x=110, y=0)
 serialReceiveDataTextForm.config(highlightbackground = 'gray')
 r1 = tk.Radiobutton(Information1, text='文本模式',  variable=11, value='A', command=nil)
 r1.place(x=5, y=0)
-r2 = tk.Radiobutton(Information1, text='HEX模式', variable=11, value='B', command=nil )
+r2 = tk.Radiobutton(Information1, text='HEX模式', variable=11, value='B', command=nil)
 r2.place(x=5, y=20)
-serialReceiveDataTextFormDeleteAllButton = tk.Button(Information1, text='清空接收区', width=8, height=1, command=serialReceiveDataTextFormDeleteAllFun)
+serialReceiveDataTextFormDeleteAllButton = tk.Button(Information1, text='清空接收区', width=8, height=1,
+                                                     command=serialReceiveDataTextFormDeleteAllFun)
 serialReceiveDataTextFormDeleteAllButton.place(x=5, y=40)
-b2 = tk.Button(Information1, text='保存接收数据', width=8, height=1, command=nil)
+b2 = tk.Button(Information1, text='保存接收数据', width=8, height=1, command=saveReceiveDataToFileFun)
 b2.place(x=5, y=65)
 
-Information2 = tk.LabelFrame(window, text="发送缓冲区", width = 490,padx=0, pady=0,height = 140)  # 创建子容器，水平，垂直方向上的边距均为10
-# Information2.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
+Information2 = tk.LabelFrame(window, text="发送缓冲区", width=490, padx=0, pady=0, height=140)  # 创建子容器，水平，垂直方向上的边距均为10
 Information2.place(x=5, y=295)
 serialSendDataTextForm = scrolledtext.ScrolledText(Information2, width=50, height=5, padx=0, wrap=tk.WORD)
 serialSendDataTextForm.place(x=110, y=0)
-serialSendDataTextForm.config(highlightbackground = 'gray')
+serialSendDataTextForm.config(highlightbackground='gray')
 r1 = tk.Radiobutton(Information2, text='文本模式',  variable=12, value='A', command=nil)
 r1.place(x=5, y=0)
-r2 = tk.Radiobutton(Information2, text='HEX模式', variable=12, value='B', command=nil )
+r2 = tk.Radiobutton(Information2, text='HEX模式', variable=12, value='B', command=nil)
 r2.place(x=5, y=20)
-b1 = tk.Button(Information2, text='清空接收区', width=8, height=1, command=serialSendDataTextFormDeleteAllFun)
+b1 = tk.Button(Information2, text='清空发送区', width=8, height=1, command=serialSendDataTextFormDeleteAllFun)
 b1.place(x=5, y=40)
-b2 = tk.Button(Information2, text='保存接收数据', width=8, height=1, command=nil)
+b2 = tk.Button(Information2, text='保存发送数据', width=8, height=1, command=saveSendDataToFileFun)
 b2.place(x=5, y=65)
 serialSendFileButton = tk.Button(Information2, text='发送文件', width=5, height=1, command=serialSendFileFun)
 serialSendFileButton.place(x=5, y=90)
@@ -268,36 +283,36 @@ serialSendDataButton = tk.Button(Information2, text='发送数据', width=5, hei
 serialSendDataButton.place(x=85, y=90)
 autoSendButtonForm = tk.Button(Information2, text='自动发送', width=5, height=1, command=autoSendFUN)
 autoSendButtonForm.place(x=165, y=90)
-autoSendlabelForm=tk.Label(Information2, text="周期(ms):")  # 创建子容器，水平，垂直方向上的边距均为10
-autoSendlabelForm.place(x=245, y=93)
+autoSendLabelForm = tk.Label(Information2, text="周期(ms):")
+autoSendLabelForm.place(x=245, y=93)
 autoSendTimeForm = tk.Entry(Information2, width=10)
 autoSendTimeForm.place(x=315, y=90)
 
 Information3 = tk.LabelFrame(window, text="端口管理", width = 490,padx=0, pady=0,height = 75)  # 创建子容器，水平，垂直方向上的边距均为10
 # Information3.pack(expand=NO, side='left', anchor = 'n', padx=5, pady=5, ipadx=5,ipady=5)
 Information3.place(x=5, y=440)
-l1=tk.Label(Information3, text='串口:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1 = tk.Label(Information3, text='串口:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=5, y=0)
 serialSelectPortForm = ttk.Combobox(Information3, width=12, textvariable=1)
 serialSelectPortForm['values'] = (1, 2, 4, 42, 100)  # 设置下拉列表的值
 serialSelectPortForm.place(x=40, y=0)
 serialSelectPortForm.bind("<<ComboboxSelected>>", serialSelectPortFormFun)
 
-l1=tk.Label(Information3, text='波特率:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1 = tk.Label(Information3, text='波特率:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=175,  y=0)
 selectSerialBaudRateForm = ttk.Combobox(Information3, width=4, textvariable=2)
 selectSerialBaudRateForm['values'] = (600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200, 230400, 460800)  # 设置下拉列表的值
 selectSerialBaudRateForm.place(x=220, y=0)
 selectSerialBaudRateForm.current(10)
 
-l1=tk.Label(Information3, text='校验位:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1 = tk.Label(Information3, text='校验位:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=280, y=0)
 selectSerialParityCheckForm = ttk.Combobox(Information3, width=2, textvariable=3)
 selectSerialParityCheckForm['values'] = ('无校验', '奇校验', '偶校验', '1校验', '0校验')  # 设置下拉列表的值
 selectSerialParityCheckForm.place(x=330, y=0)
 selectSerialParityCheckForm.current(0)
 
-l1=tk.Label(Information3, text='停止位:')  # 创建子容器，水平，垂直方向上的边距均为10
+l1 = tk.Label(Information3, text='停止位:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=375, y=0)
 selectSerialStopBitForm = ttk.Combobox(Information3, width=2, textvariable=4)
 selectSerialStopBitForm['values'] = ('1位', '1.5位', '2位')  # 设置下拉列表的值
@@ -308,8 +323,8 @@ OpenOrCloseSerialButton = tk.Button(Information3, text='打开串口', width=5, 
 OpenOrCloseSerialButton.place(x=5, y=25)
 l1 = tk.Label(Information3, text='信息:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=90, y=30)
-logtext = tk.Label(Information3, text='打开串口成功')  # 创建子容器，水平，垂直方向上的边距均为10
-logtext.place(x=130, y=30)
+logTextForm = tk.Label(Information3, text='打开串口成功')  # 创建子容器，水平，垂直方向上的边距均为10
+logTextForm.place(x=130, y=30)
 b2 = tk.Button(Information3, text='清零', width=3, height=1, command=CloseSerial)
 b2.place(x=410, y=25)
 
@@ -322,21 +337,21 @@ fh = 290
 
 def checkSerialReceiverData():
     try:
-        if ser.isOpen():
+        if serialPortOpenHl.isOpen():
             print('ready')
-            if ser.in_waiting > 0:
-                serReadData = ser.read(ser.in_waiting)
-                serReadData = str(serReadData, 'utf-8')
-                serialReceiveDataTextForm.insert(END, serReadData)
-                print('getdata')
+            if serialPortOpenHl.in_waiting > 0:
+                ser_read_data = serialPortOpenHl.read(serialPortOpenHl.in_waiting)
+                ser_read_data = str(ser_read_data, 'utf-8')
+                serialReceiveDataTextForm.insert(END, ser_read_data)
+                print('get data')
         window.after(100, checkSerialReceiverData)  # add_letter will run as soon as the mainloop starts.
     except:
         window.after(100, checkSerialReceiverData)  # add_letter will run as soon as the mainloop starts.
 
-    # logtext.config(text='Time:{0}'.format(debug))
+    # logTextForm.config(text='Time:{0}'.format(debug))
 
 
-logtext.config(text='gggg')
+logTextForm.config(text='gggg')
 
 FormInit()
 
