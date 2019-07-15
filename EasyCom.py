@@ -9,10 +9,18 @@ from typing import Any
 
 global serialPortOpenHl
 global debug, windowFormWidth, windowFormHeight, serial_OpenOrClose, serial_AutoSendState, auto_SendAfterHL
-serial_OpenOrClose = ' '
-serial_AutoSendState = ' '
-auto_SendAfterHL = ''
-serialPortOpenHl = ''
+
+
+def sysInit():
+    global serialPortOpenHl
+    global debug, windowFormWidth, windowFormHeight, serial_OpenOrClose, serial_AutoSendState, auto_SendAfterHL
+    serial_OpenOrClose = ''
+    serial_AutoSendState = ''
+    auto_SendAfterHL = ''
+    serialPortOpenHl = ''
+    serialSendDataButton.config(state=DISABLED)
+    serialSendFileButton.config(state=DISABLED)
+    autoSendButtonForm.config(state=DISABLED)
 
 
 def saveReceiveDataToFileFun():
@@ -20,6 +28,33 @@ def saveReceiveDataToFileFun():
     with open(save_file_path, 'w', encoding='utf-8') as afile:
         afile.write(serialReceiveDataTextForm.get(1.0, END))
         afile.close()
+    return
+
+
+def serialSelectStopBitFormFun(self):
+    print(selectSerialStopBitForm.get())
+    if serialPortOpenHl != '':
+        if serialPortOpenHl.isOpen():
+            OpenOrCloseSerialFun()
+            OpenOrCloseSerialFun()
+    return
+
+
+def serialSelectBaudRateFormFun(self):
+    print(selectSerialBaudRateForm.get())
+    if serialPortOpenHl != '':
+        if serialPortOpenHl.isOpen():
+            OpenOrCloseSerialFun()
+            OpenOrCloseSerialFun()
+    return
+
+
+def serialSelectParityCheckFormFun(self):
+    print(selectSerialParityCheckForm.get())
+    if serialPortOpenHl != '':
+        if serialPortOpenHl.isOpen():
+            OpenOrCloseSerialFun()
+            OpenOrCloseSerialFun()
     return
 
 
@@ -126,9 +161,13 @@ def openSerial():
         serialPortOpenHl = serial.Serial(selected_port, bps, parity=parity_val, stopbits=stop_bits_val, timeout=timex, write_timeout=timex)
         print("串口详情参数：", serialPortOpenHl)
         logTextForm.config(text='串口打开成功')
+        return True
+
     except Exception as e:
         print("串口打开错误", e)
         logTextForm.config(text='串口打开错误')
+        OpenOrCloseSerialButton.config(text='打开串口')
+        return False
 
 
 def CloseSerial():
@@ -139,15 +178,30 @@ def CloseSerial():
 
 
 def OpenOrCloseSerialFun():
-    global serial_OpenOrClose
+    global serial_OpenOrClose, serial_AutoSendState
     if serial_OpenOrClose != 'close':
-        openSerial()
-        serial_OpenOrClose = 'close'
-        OpenOrCloseSerialButton.config(text='关闭串口')
+        if openSerial():
+            serial_OpenOrClose = 'close'
+            OpenOrCloseSerialButton.config(text='关闭串口')
+            serialSendDataButton.config(state=NORMAL)
+            serialSendFileButton.config(state=NORMAL)
+            autoSendButtonForm.config(state=NORMAL)
+            if serial_AutoSendState == 'NeedToRUN':
+                autoSendFUN()
+        else:
+            serialSendDataButton.config(state=DISABLED)
+            serialSendFileButton.config(state=DISABLED)
+            autoSendButtonForm.config(state=DISABLED)
     else:
+        if serial_AutoSendState == 'RUN':
+            autoSendFUN()   # 关闭串口前，检查是否在自动发送状态，如果是则先关闭。
+            serial_AutoSendState = 'NeedToRUN'
         CloseSerial()
         serial_OpenOrClose = 'open'
         OpenOrCloseSerialButton.config(text='打开串口')
+        serialSendDataButton.config(state=DISABLED)
+        serialSendFileButton.config(state=DISABLED)
+        autoSendButtonForm.config(state=DISABLED)
     return
 
 
@@ -192,34 +246,29 @@ def autoSendRunFUN():
         if serialPortOpenHl.isOpen():
             text_send = serialSendDataTextForm.get('1.0', 'end-1c')
             result = serialPortOpenHl.write(text_send.encode('utf-8'))
-            print(result)
             auto_SendAfterHL = window.after(autoSendTimedata_ms, autoSendRunFUN)
             return(True)
         else:
             logTextForm.config(text='请先打开串口')
-            serial_AutoSendState = 'STOP'
-            autoSendButtonForm.config(text='自动发送')
-            serialSendDataButton.config(state=NORMAL)
-            serialSendFileButton.config(state=NORMAL)
+            return False
     except:
         logTextForm.config(text='请先打开串口或选择正确的重复时间')
-        serial_AutoSendState = 'STOP'
-        autoSendButtonForm.config(text='自动发送')
-        serialSendDataButton.config(state=NORMAL)
-        serialSendFileButton.config(state=NORMAL)
         return False
 
 
 def autoSendFUN():
     global serial_AutoSendState,auto_SendAfterHL
     if serial_AutoSendState != 'RUN':
-        isAutoSendOk = autoSendRunFUN()
-        if isAutoSendOk:
+        if autoSendRunFUN():
             serial_AutoSendState = 'RUN'
             autoSendButtonForm.config(text='停止自动')
             serialSendDataButton.config(state=DISABLED)
             serialSendFileButton.config(state=DISABLED)
         else:
+            serial_AutoSendState = 'STOP'
+            autoSendButtonForm.config(text='自动发送')
+            serialSendDataButton.config(state=NORMAL)
+            serialSendFileButton.config(state=NORMAL)
             return
     else:
         window.after_cancel(auto_SendAfterHL)
@@ -321,16 +370,19 @@ serialSelectPortForm.bind("<<ComboboxSelected>>", serialSelectPortFormFun)
 l1 = tk.Label(Information3, text='波特率:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=175,  y=0)
 selectSerialBaudRateForm = ttk.Combobox(Information3, width=4, textvariable=2)
-selectSerialBaudRateForm['values'] = (600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200, 230400, 460800)  # 设置下拉列表的值
+selectSerialBaudRateForm['values'] = (600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200, 230400,
+                                      460800)  # 设置下拉列表的值
 selectSerialBaudRateForm.place(x=220, y=0)
 selectSerialBaudRateForm.current(10)
+selectSerialBaudRateForm.bind("<<ComboboxSelected>>", serialSelectBaudRateFormFun)
 
 l1 = tk.Label(Information3, text='校验位:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=280, y=0)
 selectSerialParityCheckForm = ttk.Combobox(Information3, width=2, textvariable=3)
-selectSerialParityCheckForm['values'] = ('无校验', '奇校验', '偶校验', '1校验', '0校验')  # 设置下拉列表的值
+selectSerialParityCheckForm['values'] = ('无校验', '奇校验', '偶校验')  # 设置下拉列表的值
 selectSerialParityCheckForm.place(x=330, y=0)
 selectSerialParityCheckForm.current(0)
+selectSerialParityCheckForm.bind("<<ComboboxSelected>>", serialSelectParityCheckFormFun)
 
 l1 = tk.Label(Information3, text='停止位:')  # 创建子容器，水平，垂直方向上的边距均为10
 l1.place(x=375, y=0)
@@ -338,6 +390,7 @@ selectSerialStopBitForm = ttk.Combobox(Information3, width=2, textvariable=4)
 selectSerialStopBitForm['values'] = ('1位', '1.5位', '2位')  # 设置下拉列表的值
 selectSerialStopBitForm.place(x=420, y=0)
 selectSerialStopBitForm.current(0)
+selectSerialStopBitForm.bind("<<ComboboxSelected>>", serialSelectStopBitFormFun)
 
 OpenOrCloseSerialButton = tk.Button(Information3, text='打开串口', width=5, height=1, command=OpenOrCloseSerialFun)
 OpenOrCloseSerialButton.place(x=5, y=25)
@@ -374,6 +427,7 @@ def checkSerialReceiverData():
 logTextForm.config(text='gggg')
 
 FormInit()
+sysInit()
 
 getSerialList()
 
