@@ -152,29 +152,36 @@ def OpenOrCloseSerialFun():
 
 
 def serialSendDataFUN():
-    if serialPortOpenHl.isOpen():
-        text_send = serialSendDataTextForm.get('1.0', 'end-1c')
-        result = serialPortOpenHl.write(text_send.encode('utf-8'))
-        print(result)
-    else:
+    try:
+        if serialPortOpenHl.isOpen():
+            text_send = serialSendDataTextForm.get('1.0', 'end-1c')
+            result = serialPortOpenHl.write(text_send.encode('utf-8'))
+            print(result)
+        else:
+            logTextForm.config(text='请先打开串口')
+    except:
         logTextForm.config(text='请先打开串口')
     return
 
 
 def serialSendFileFun():
     open_file_path = tk.filedialog.askopenfilename()
-    with open(open_file_path, encoding='utf-8') as afile:
-        file_text = afile.read()
-        afile.close()
-        try:
-            if serialPortOpenHl.isOpen():
-                result = serialPortOpenHl.write(file_text.encode('utf-8'))
-                print(result)
-            else:
-                logTextForm.config(text='请先打开串口')
-        except Exception as e:
-            print("发送错误", e)
-            logTextForm.config(text='发送错误')
+    try:
+        with open(open_file_path, encoding='utf-8') as afile:
+            file_text = afile.read()
+            afile.close()
+            try:
+                if serialPortOpenHl.isOpen():
+                    result = serialPortOpenHl.write(file_text.encode('utf-8'))
+                    print(result)
+                else:
+                    logTextForm.config(text='请先打开串口')
+            except Exception as e:
+                print("发送错误", e)
+                logTextForm.config(text='发送错误')
+    except Exception as e:
+        print("打开文件错误", e)
+        logTextForm.config(text='打开文件错误')
     return
 
 
