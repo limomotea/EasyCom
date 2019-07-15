@@ -46,7 +46,7 @@ def serialSendDataTextFormDeleteAllFun():
 
 
 def serialSelectPortFormFun(self):
-    texttemp = '选中串口：' + serialSelect.get()
+    texttemp = '选中串口：' + serialSelectPortForm.get()
     print(texttemp)
     logTextForm.config(text=texttemp)
     return
@@ -153,7 +153,7 @@ def OpenOrCloseSerialFun():
 
 def serialSendDataFUN():
     if serialPortOpenHl.isOpen():
-        text_send = serialSendDataScrolledText.get('1.0', 'end-1c')
+        text_send = serialSendDataTextForm.get('1.0', 'end-1c')
         result = serialPortOpenHl.write(text_send.encode('utf-8'))
         print(result)
     else:
@@ -162,6 +162,19 @@ def serialSendDataFUN():
 
 
 def serialSendFileFun():
+    open_file_path = tk.filedialog.askopenfilename()
+    with open(open_file_path, encoding='utf-8') as afile:
+        file_text = afile.read()
+        afile.close()
+        try:
+            if serialPortOpenHl.isOpen():
+                result = serialPortOpenHl.write(file_text.encode('utf-8'))
+                print(result)
+            else:
+                logTextForm.config(text='请先打开串口')
+        except Exception as e:
+            print("发送错误", e)
+            logTextForm.config(text='发送错误')
     return
 
 
@@ -170,7 +183,7 @@ def autoSendRunFUN():
     try:
         autoSendTimedata_ms = int(autoSendTimeForm.get())
         if serialPortOpenHl.isOpen():
-            text_send = serialSendDataScrolledText.get('1.0', 'end-1c')
+            text_send = serialSendDataTextForm.get('1.0', 'end-1c')
             result = serialPortOpenHl.write(text_send.encode('utf-8'))
             print(result)
             auto_SendAfterHL = window.after(autoSendTimedata_ms, autoSendRunFUN)
