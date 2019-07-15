@@ -7,12 +7,12 @@ from tkinter import scrolledtext
 from tkinter import ttk
 from typing import Any
 
-global serialPortOpenHl
+global serialPortOpenHl, serialSendDataNumberOfByte, serialgetDataNumberOfByte
 global debug, windowFormWidth, windowFormHeight, serial_OpenOrClose, serial_AutoSendState, auto_SendAfterHL
 
 
 def sysInit():
-    global serialPortOpenHl
+    global serialPortOpenHl, serialSendDataNumberOfByte, serialgetDataNumberOfByte
     global debug, windowFormWidth, windowFormHeight, serial_OpenOrClose, serial_AutoSendState, auto_SendAfterHL
     serial_OpenOrClose = ''
     serial_AutoSendState = ''
@@ -21,6 +21,9 @@ def sysInit():
     serialSendDataButton.config(state=DISABLED)
     serialSendFileButton.config(state=DISABLED)
     autoSendButtonForm.config(state=DISABLED)
+    serialSendDataNumberOfByte = 0
+    serialgetDataNumberOfByte = 0
+
 
 
 def saveReceiveDataToFileFun():
@@ -123,6 +126,13 @@ def windowReSize(self):
     return
 
 
+def SerialSendGetDateNumberOfByte():
+    global serialSendDataNumberOfByte, serialgetDataNumberOfByte
+    serialSendDataNumberOfByte = 0
+    serialgetDataNumberOfByte = 0
+    logTextForm.config(text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
+    return
+
 # 第5步，定义两个触发事件时的函数insert_point和insert_end（注意：因为Python的执行顺序是从上往下，所以函数一定要放在按钮的上面）
 def getSerialList():  # 在鼠标焦点处插入输入内容
     port_list = list(serial.tools.list_ports.comports())
@@ -206,11 +216,13 @@ def OpenOrCloseSerialFun():
 
 
 def serialSendDataFUN():
+    global serialSendDataNumberOfByte
     try:
         if serialPortOpenHl.isOpen():
             text_send = serialSendDataTextForm.get('1.0', 'end-1c')
             result = serialPortOpenHl.write(text_send.encode('utf-8'))
-            print(result)
+            serialSendDataNumberOfByte = serialSendDataNumberOfByte + result
+            logTextForm.config(text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
         else:
             logTextForm.config(text='请先打开串口')
     except:
@@ -219,6 +231,7 @@ def serialSendDataFUN():
 
 
 def serialSendFileFun():
+    global serialSendDataNumberOfByte
     open_file_path = tk.filedialog.askopenfilename()
     try:
         with open(open_file_path, encoding='utf-8') as afile:
@@ -227,7 +240,9 @@ def serialSendFileFun():
             try:
                 if serialPortOpenHl.isOpen():
                     result = serialPortOpenHl.write(file_text.encode('utf-8'))
-                    print(result)
+                    serialSendDataNumberOfByte = serialSendDataNumberOfByte + result
+                    logTextForm.config(
+                        text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
                 else:
                     logTextForm.config(text='请先打开串口')
             except Exception as e:
@@ -240,12 +255,14 @@ def serialSendFileFun():
 
 
 def autoSendRunFUN():
-    global serial_AutoSendState,auto_SendAfterHL
+    global serial_AutoSendState, auto_SendAfterHL, serialSendDataNumberOfByte
     try:
         autoSendTimedata_ms = int(autoSendTimeForm.get())
         if serialPortOpenHl.isOpen():
             text_send = serialSendDataTextForm.get('1.0', 'end-1c')
             result = serialPortOpenHl.write(text_send.encode('utf-8'))
+            serialSendDataNumberOfByte = serialSendDataNumberOfByte + result
+            logTextForm.config(text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
             auto_SendAfterHL = window.after(autoSendTimedata_ms, autoSendRunFUN)
             return(True)
         else:
@@ -398,7 +415,7 @@ l1 = tk.Label(Information3, text='信息:')  # 创建子容器，水平，垂直
 l1.place(x=90, y=30)
 logTextForm = tk.Label(Information3, text='打开串口成功')  # 创建子容器，水平，垂直方向上的边距均为10
 logTextForm.place(x=130, y=30)
-b2 = tk.Button(Information3, text='清零', width=3, height=1, command=CloseSerial)
+b2 = tk.Button(Information3, text='清零', width=3, height=1, command=SerialSendGetDateNumberOfByte)
 b2.place(x=410, y=25)
 
 debug = 0
@@ -409,14 +426,18 @@ fh = 290
 
 
 def checkSerialReceiverData():
+    global serialSendDataNumberOfByte, serialgetDataNumberOfByte
     try:
         if serialPortOpenHl.isOpen():
-            print('ready')
             if serialPortOpenHl.in_waiting > 0:
-                ser_read_data = serialPortOpenHl.read(serialPortOpenHl.in_waiting)
+                number_of_read_byte = serialPortOpenHl.in_waiting
+                ser_read_data = serialPortOpenHl.read(number_of_read_byte)
                 ser_read_data = str(ser_read_data, 'utf-8')
                 serialReceiveDataTextForm.insert(END, ser_read_data)
-                print('get data')
+                serialgetDataNumberOfByte = serialgetDataNumberOfByte + number_of_read_byte
+                logTextForm.config(
+                    text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
+
         window.after(100, checkSerialReceiverData)  # add_letter will run as soon as the mainloop starts.
     except:
         window.after(100, checkSerialReceiverData)  # add_letter will run as soon as the mainloop starts.
