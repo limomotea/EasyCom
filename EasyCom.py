@@ -6,6 +6,7 @@ from tkinter import *
 from tkinter import scrolledtext
 from tkinter import ttk
 from typing import Any
+import binascii
 
 global serialPortOpenHl, serialSendDataNumberOfByte, serialgetDataNumberOfByte
 global debug, windowFormWidth, windowFormHeight, serial_OpenOrClose, serial_AutoSendState, auto_SendAfterHL
@@ -434,8 +435,14 @@ def checkSerialReceiverData():
             if serialPortOpenHl.in_waiting > 0:
                 number_of_read_byte = serialPortOpenHl.in_waiting
                 ser_read_data = serialPortOpenHl.read(number_of_read_byte)
-                ser_read_data = str(ser_read_data, 'utf-8')
-                serialReceiveDataTextForm.insert(END, ser_read_data)
+                if serialReceiveHexSelectV.get() == 1:
+                    ser_read_data_convert = ''
+                    for eachData in ser_read_data:
+                        ser_read_data_convert = ser_read_data_convert + ' {0:0>2x}'.format(eachData)
+                    # ser_read_data = binascii.b2a_hex(ser_read_data)
+                else:
+                    ser_read_data_convert = str(ser_read_data, 'utf-8')
+                serialReceiveDataTextForm.insert(END, ser_read_data_convert)
                 serialgetDataNumberOfByte = serialgetDataNumberOfByte + number_of_read_byte
                 logTextForm.config(
                     text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
