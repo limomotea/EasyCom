@@ -482,6 +482,7 @@ def checkSerialReceiverData():
                 else:
                     ser_read_data_convert = str(ser_read_data, 'utf-8')
                 serialReceiveDataTextForm.insert(END, ser_read_data_convert)
+                serialReceiveDataTextForm.see(END)
 
                 serialgetDataNumberOfByte = serialgetDataNumberOfByte + number_of_read_byte
                 logTextForm.config(
