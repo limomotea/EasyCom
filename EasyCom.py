@@ -457,8 +457,8 @@ l1 = tk.Label(Information3, text='信息:')  # 创建子容器，水平，垂直
 l1.place(x=90, y=30)
 logTextForm = tk.Label(Information3, text='打开串口成功')  # 创建子容器，水平，垂直方向上的边距均为10
 logTextForm.place(x=130, y=30)
-b2 = tk.Button(Information3, text='清零', width=3, height=1, command=SerialSendGetDateNumberOfByte)
-b2.place(x=410, y=25)
+b2 = tk.Button(Information3, text='刷新串口 计数清零', width=12, height=1, command=SerialSendGetDateNumberOfByte)
+b2.place(x=350, y=25)
 
 debug = 0
 windowFormWidth = 500
