@@ -131,6 +131,7 @@ def SerialSendGetDateNumberOfByte():
     serialSendDataNumberOfByte = 0
     serialgetDataNumberOfByte = 0
     logTextForm.config(text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
+    getSerialList()
     return
 
 # 第5步，定义两个触发事件时的函数insert_point和insert_end（注意：因为Python的执行顺序是从上往下，所以函数一定要放在按钮的上面）
@@ -214,10 +215,36 @@ def OpenOrCloseSerialFun():
         autoSendButtonForm.config(state=DISABLED)
     return
 
+def str2hex(s):
+    odata = 0;
+    su =s.upper()
+    for c in su:
+        tmp=ord(c)
+        if ord('0') <= tmp <= ord('9') :
+            odata = odata << 4
+            odata += tmp - ord('0')
+        elif ord('A') <= tmp <= ord('F'):
+            odata = odata << 4
+            odata += tmp - ord('A') + 10
+    return odata
 
 def ConvertToHex(text_send):
-    text_send = text_send + 'HEX'
-    return text_send
+    # text_send = text_send + 'HEX'
+    a = ''
+    i = 0
+    b = []
+    for eachtext in text_send:
+        if i == 0:
+            i = 1
+            a = eachtext
+        else:
+            i = 0
+            a = a + eachtext
+            b.append(str2hex(a))
+    if i == 1:
+        b.append(str2hex(a))
+
+    return bytes(b)
 
 
 def serialSendDataFUN():
@@ -227,7 +254,9 @@ def serialSendDataFUN():
             text_send = serialSendDataTextForm.get('1.0', 'end-1c')
             if serialSendHexSelectV.get() == 1:
                 text_send = ConvertToHex(text_send)
-            result = serialPortOpenHl.write(text_send.encode('utf-8'))
+                result = serialPortOpenHl.write(text_send)
+            else:
+                result = serialPortOpenHl.write(text_send.encode('utf-8'))
             serialSendDataNumberOfByte = serialSendDataNumberOfByte + result
             logTextForm.config(text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
         else:
@@ -269,7 +298,9 @@ def autoSendRunFUN():
             text_send = serialSendDataTextForm.get('1.0', 'end-1c')
             if serialSendHexSelectV.get() == 1:
                 text_send = ConvertToHex(text_send)
-            result = serialPortOpenHl.write(text_send.encode('utf-8'))
+                result = serialPortOpenHl.write(text_send)
+            else:
+                result = serialPortOpenHl.write(text_send.encode('utf-8'))
             serialSendDataNumberOfByte = serialSendDataNumberOfByte + result
             logTextForm.config(text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
             auto_SendAfterHL = window.after(autoSendTimedata_ms, autoSendRunFUN)
