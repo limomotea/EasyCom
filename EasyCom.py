@@ -335,14 +335,15 @@ window.geometry('500x520')  # 这里的乘是小x
 
 
 var = 1
+serialReceiveHexSelectV = IntVar()
 Information1 = tk.LabelFrame(window, text="接收缓冲区", width=490, padx=0, pady=0, height=290)  # 创建子容器，水平，垂直方向上的边距均为10
 Information1.place(x=5, y=0)
 serialReceiveDataTextForm = scrolledtext.ScrolledText(Information1, width=50, height=17, padx=0, wrap=tk.WORD)
 serialReceiveDataTextForm.place(x=110, y=0)
 serialReceiveDataTextForm.config(highlightbackground = 'gray')
-r1 = tk.Radiobutton(Information1, text='文本模式',  variable=11, value='A', command=nil)
+r1 = tk.Radiobutton(Information1, text='文本模式',  variable=serialReceiveHexSelectV, value=0, command=nil)
 r1.place(x=5, y=0)
-r2 = tk.Radiobutton(Information1, text='HEX模式', variable=11, value='B', command=nil)
+r2 = tk.Radiobutton(Information1, text='HEX模式', variable=serialReceiveHexSelectV, value=1, command=nil)
 r2.place(x=5, y=20)
 serialReceiveDataTextFormDeleteAllButton = tk.Button(Information1, text='清空接收区', width=8, height=1,
                                                      command=serialReceiveDataTextFormDeleteAllFun)
@@ -350,14 +351,15 @@ serialReceiveDataTextFormDeleteAllButton.place(x=5, y=40)
 b2 = tk.Button(Information1, text='保存接收数据', width=8, height=1, command=saveReceiveDataToFileFun)
 b2.place(x=5, y=65)
 
+serialSendHexSelectV = IntVar()
 Information2 = tk.LabelFrame(window, text="发送缓冲区", width=490, padx=0, pady=0, height=140)  # 创建子容器，水平，垂直方向上的边距均为10
 Information2.place(x=5, y=295)
 serialSendDataTextForm = scrolledtext.ScrolledText(Information2, width=50, height=5, padx=0, wrap=tk.WORD)
 serialSendDataTextForm.place(x=110, y=0)
 serialSendDataTextForm.config(highlightbackground='gray')
-r1 = tk.Radiobutton(Information2, text='文本模式',  variable=12, value='A', command=nil)
+r1 = tk.Radiobutton(Information2, text='文本模式',  variable=serialSendHexSelectV, value=0, command=nil)
 r1.place(x=5, y=0)
-r2 = tk.Radiobutton(Information2, text='HEX模式', variable=12, value='B', command=nil)
+r2 = tk.Radiobutton(Information2, text='HEX模式', variable=serialSendHexSelectV, value=1, command=nil)
 r2.place(x=5, y=20)
 b1 = tk.Button(Information2, text='清空发送区', width=8, height=1, command=serialSendDataTextFormDeleteAllFun)
 b1.place(x=5, y=40)
