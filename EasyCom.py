@@ -6,7 +6,6 @@ from tkinter import *
 from tkinter import scrolledtext
 from tkinter import ttk
 from typing import Any
-import binascii
 
 global serialPortOpenHl, serialSendDataNumberOfByte, serialgetDataNumberOfByte
 global debug, windowFormWidth, windowFormHeight, serial_OpenOrClose, serial_AutoSendState, auto_SendAfterHL
