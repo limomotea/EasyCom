@@ -215,11 +215,18 @@ def OpenOrCloseSerialFun():
     return
 
 
+def ConvertToHex(text_send):
+    text_send = text_send + 'HEX'
+    return text_send
+
+
 def serialSendDataFUN():
     global serialSendDataNumberOfByte
     try:
         if serialPortOpenHl.isOpen():
             text_send = serialSendDataTextForm.get('1.0', 'end-1c')
+            if serialSendHexSelectV.get() == 1:
+                text_send = ConvertToHex(text_send)
             result = serialPortOpenHl.write(text_send.encode('utf-8'))
             serialSendDataNumberOfByte = serialSendDataNumberOfByte + result
             logTextForm.config(text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
@@ -260,6 +267,8 @@ def autoSendRunFUN():
         autoSendTimedata_ms = int(autoSendTimeForm.get())
         if serialPortOpenHl.isOpen():
             text_send = serialSendDataTextForm.get('1.0', 'end-1c')
+            if serialSendHexSelectV.get() == 1:
+                text_send = ConvertToHex(text_send)
             result = serialPortOpenHl.write(text_send.encode('utf-8'))
             serialSendDataNumberOfByte = serialSendDataNumberOfByte + result
             logTextForm.config(text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
@@ -442,6 +451,7 @@ def checkSerialReceiverData():
                 else:
                     ser_read_data_convert = str(ser_read_data, 'utf-8')
                 serialReceiveDataTextForm.insert(END, ser_read_data_convert)
+
                 serialgetDataNumberOfByte = serialgetDataNumberOfByte + number_of_read_byte
                 logTextForm.config(
                     text='发送字节:{0} 接收字节:{1}'.format(serialSendDataNumberOfByte, serialgetDataNumberOfByte))
