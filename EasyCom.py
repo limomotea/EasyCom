@@ -554,5 +554,5 @@ getSerialList()
 checkSerialReceiverData()
 
 window.bind("<Configure>", windowReSize)
-# 第8步，主窗口循环显示
+# 第8步，主窗口循环显示#####
 window.mainloop()
